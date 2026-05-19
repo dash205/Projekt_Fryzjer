@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "clients.h"
+#include "services.h"
+#include "appointments.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,7 +21,10 @@ public:
     ~MainWindow() override;
 
 private slots:
-    void on_pushButton_clicked();
+    void on_actionClients_triggered();
+    void on_actionMain_triggered();
+    void on_actionServices_triggered();
+    void on_actionAppointments_triggered();
 
 private:
     Ui::MainWindow *ui;
