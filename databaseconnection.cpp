@@ -19,16 +19,52 @@ bool DatabaseConnection::openConnection() {
     return true;
 }
 
-bool DatabaseConnection::addClient(const QString &name) {
-    QSqlQuery query(m_db);
+// bool DatabaseConnection::addClient(const Client &client) {
+//     QSqlQuery query(m_db);
+//
+//     query.prepare("INSERT INTO client (name) VALUES (:name)");
+//
+//     query.bindValue(":name", name);
+//
+//     if(!query.exec()) {
+//         qDebug()<<"Blad dodwania klienta"<<query.lastError().text();
+//         return false;
+//     }
+//     return true;
+// }
 
-    query.prepare("INSERT INTO client (name) VALUES (:name)");
+bool DatabaseConnection::addClient(const Client &client) {
+}
 
-    query.bindValue(":name", name);
+QList<Client> DatabaseConnection::getAllClients() {
+}
 
-    if(!query.exec()) {
-        qDebug()<<"Blad dodwania klienta"<<query.lastError().text();
-        return false;
-    }
-    return true;
+bool DatabaseConnection::updateClient(const Client &client) {
+}
+
+bool DatabaseConnection::deleteClient(int id) {
+}
+
+bool DatabaseConnection::addService(const Service &service) {
+}
+
+QList<Service> DatabaseConnection::getAllServices() {
+}
+
+bool DatabaseConnection::updateService(const Service &service) {
+}
+
+bool DatabaseConnection::deleteService(int id) {
+}
+
+bool DatabaseConnection::addAppointment(const Appointment &appointment) {
+}
+
+QList<Appointment> DatabaseConnection::getAllAppointments() {
+}
+
+bool DatabaseConnection::updateAppointment(const Appointment &appointment) {
+}
+
+bool DatabaseConnection::deleteAppointment(int id) {
 }

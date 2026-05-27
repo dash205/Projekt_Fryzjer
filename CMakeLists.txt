@@ -26,6 +26,9 @@ set(PROJECT_SOURCES
         appointments.cpp
         appointments.h
         appointments.ui
+        appointmentClass.h
+        serviceClass.h
+        clientClass.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
