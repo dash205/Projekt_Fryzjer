@@ -21,8 +21,9 @@ class Appointments : public QWidget {
 
 public:
     explicit Appointments(QWidget *parent = nullptr);
-
     ~Appointments() override;
+
+    void refreshTable();
 
 private:
     Ui::Appointments *ui;
