@@ -24,6 +24,10 @@ public:
     ~Appointments() override;
 
     void refreshTable();
+    void setupForm();
+
+private slots:
+    void onAddAppointmentClicked();
 
 private:
     Ui::Appointments *ui;

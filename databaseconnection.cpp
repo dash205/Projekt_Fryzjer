@@ -37,6 +37,22 @@ bool DatabaseConnection::addClient(const Client &client) {
 }
 
 QList<Client> DatabaseConnection::getAllClients() {
+    QList<Client> list;
+    QSqlQuery query("SELECT id, first_name, last_name FROM clients");
+
+    if (!query.exec()) {
+        qDebug()<<query.lastError().text();
+        return list;
+    }
+
+    while (query.next()) {
+        Client c;
+        c.id = query.value("id").toInt();
+        c.first_name = query.value("first_name").toString();
+        c.last_name = query.value("last_name").toString();
+        list.append(c);
+    }
+    return list;
 }
 
 bool DatabaseConnection::updateClient(const Client &client) {
@@ -49,6 +65,21 @@ bool DatabaseConnection::addService(const Service &service) {
 }
 
 QList<Service> DatabaseConnection::getAllServices() {
+    QList<Service> list;
+    QSqlQuery query("SELECT id, name FROM services");
+
+    if (!query.exec()) {
+        qDebug()<<query.lastError().text();
+        return list;
+    }
+
+    while (query.next()) {
+        Service s;
+        s.id = query.value("id").toInt();
+        s.name = query.value("name").toString();
+        list.append(s);
+    }
+    return list;
 }
 
 bool DatabaseConnection::updateService(const Service &service) {
@@ -58,6 +89,22 @@ bool DatabaseConnection::deleteService(int id) {
 }
 
 bool DatabaseConnection::addAppointment(const Appointment &appointment) {
+    QSqlQuery query;
+    query.prepare(
+        "INSERT INTO appointments (client_id, service_id, appointment_date, notes) "
+        "VALUES (:client_id, :service_id, :date, :notes)");
+
+    query.bindValue(":client_id", appointment.client_id);
+    query.bindValue(":service_id", appointment.service_id);
+    query.bindValue(":date", appointment.appointment_date);
+    query.bindValue(":notes", appointment.notes);   
+
+    if (!query.exec()) {
+        qDebug()<<"Blad dodawania wizyty"<<query.lastError().text();
+        return false;
+    }
+
+    return true;
 }
 
 QList<Appointment> DatabaseConnection::getAllAppointments() {
