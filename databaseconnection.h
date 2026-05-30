@@ -4,7 +4,8 @@
 #include <QSqlQuery>
 #include <QStandardPaths>
 #include <QDir>
-
+#include <QSqlTableModel>
+#include <QTableView>
 #include "appointmentClass.h"
 #include "serviceClass.h"
 #include "clientClass.h"

@@ -48,8 +48,6 @@ bool DatabaseConnection::deleteClient(int id) {
 bool DatabaseConnection::addService(const Service &service) {
 }
 
-QList<Service> DatabaseConnection::getAllServices() {
-}
 
 bool DatabaseConnection::updateService(const Service &service) {
 }

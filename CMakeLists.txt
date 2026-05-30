@@ -29,6 +29,9 @@ set(PROJECT_SOURCES
         appointmentClass.h
         serviceClass.h
         clientClass.h
+        addservicedialog.cpp
+        addservicedialog.h
+        addservicedialog.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
