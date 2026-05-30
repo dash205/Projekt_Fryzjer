@@ -27,7 +27,7 @@ set(PROJECT_SOURCES
         appointments.h
         appointments.ui
         appointmentClass.h
-        serviceClass.h
+        serviceData.h
         clientClass.h
         addservicedialog.cpp
         addservicedialog.h

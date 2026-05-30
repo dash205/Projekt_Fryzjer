@@ -3,8 +3,8 @@
 
 #include <QString>
 
-class Service {
-    int id=0;
+struct ServiceData {
+    int id;
     QString name;
     double price;
     int duration_minutes;

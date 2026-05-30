@@ -32,6 +32,17 @@ bool DatabaseConnection::openConnection() {
 //     }
 //     return true;
 // }
+bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
+{
+    QSqlQuery query(m_db);
+    query.prepare("Select a.* from appointments a "
+                  "join services s on s.id = a.service_id where s.id = (:id)");
+    query.bindValue(":id", service.id);
+
+    if (!query.exec()) {qDebug()<<query.lastError().text(); return false;}
+
+    return query.next();
+}
 
 bool DatabaseConnection::addClient(const Client &client) {
 }
@@ -45,11 +56,11 @@ bool DatabaseConnection::updateClient(const Client &client) {
 bool DatabaseConnection::deleteClient(int id) {
 }
 
-bool DatabaseConnection::addService(const Service &service) {
+bool DatabaseConnection::addService(const ServiceData &service) {
 }
 
 
-bool DatabaseConnection::updateService(const Service &service) {
+bool DatabaseConnection::updateService(const ServiceData &service) {
 }
 
 bool DatabaseConnection::deleteService(int id) {

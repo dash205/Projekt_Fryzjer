@@ -10,6 +10,7 @@
 #include "databaseconnection.h"
 #include "ui_addservicedialog.h"
 #include "ui_services.h"
+#include "serviceData.h"
 
 void Services::createModel()
 {
@@ -93,10 +94,16 @@ void Services::onEditClicked()
 void Services::onDeleteClicked()
 {
     QModelIndex index = ui->ServicesTable->currentIndex();
-
+    ServiceData serviceData;
+    serviceData.id = model->data(model->index(index.row(), 0)).toInt();
     if (!index.isValid())
     {
         QMessageBox::warning(this, tr("Błąd"), tr("Usługa nie została wybrana."));
+        return;
+    }
+    if (DatabaseConnection::instance().CanServicesBeDeleted(serviceData))
+    {
+        QMessageBox::warning(this, "Błąd", "Nie można usunąć – usługa jest przypisana do wizyty.");
         return;
     }
     QMessageBox::StandardButton reply = QMessageBox::question(this, "Usun",
