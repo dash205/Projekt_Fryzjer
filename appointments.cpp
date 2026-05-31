@@ -19,6 +19,7 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
+    connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
 
     refreshTable();
     setupForm();
@@ -92,5 +93,32 @@ void Appointments::onAddAppointmentClicked() {
         ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
     } else {
         QMessageBox::critical(this, "Błąd", "Nie udało się zapisać danych do bazy.");
+    }
+}
+
+void Appointments::onDeleteAppointmentClicked() {
+    int currentRow = ui->tableWidget->currentRow();
+
+    if (currentRow < 0) {
+        QMessageBox::warning(this, "Brak wyboru", "Zaznacz w tabeli wizytę, którą chcesz usunąć.");
+        return;
+    }
+
+    QTableWidgetItem *item = ui->tableWidget->item(currentRow, 0);
+    if (!item) return;
+
+    int appointmentId = item->data(Qt::UserRole).toInt();
+    auto reply = QMessageBox::question(this, "Potwierdzenie usunięcia",
+                                       "Czy na pewno chcesz bezpowrotnie usunąć tę wizytę?",
+                                       QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::No) {
+        return;
+    }
+
+    if (DatabaseConnection::instance().deleteAppointment(appointmentId)) {
+        refreshTable();
+    } else {
+        QMessageBox::critical(this, "Błąd", "Nie udało się usunąć wizyty z bazy danych.");
     }
 }

@@ -153,4 +153,15 @@ bool DatabaseConnection::updateAppointment(const Appointment &appointment) {
 }
 
 bool DatabaseConnection::deleteAppointment(int id) {
+    QSqlQuery query;
+
+    query.prepare(
+        "DELETE FROM appointments WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        qDebug()<<"Blad podczas usuwania wizyty: "<<query.lastError().text();
+        return false;
+    }
+    return true;
 }

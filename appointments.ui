@@ -22,13 +22,13 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>-10</x>
-     <y>2</y>
-     <width>711</width>
-     <height>471</height>
+     <x>0</x>
+     <y>0</y>
+     <width>691</width>
+     <height>461</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1">
     <property name="sizeConstraint">
      <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
     </property>
@@ -46,14 +46,21 @@
       <item row="0" column="0">
        <widget class="QComboBox" name="comboClient"/>
       </item>
-      <item row="1" column="0">
-       <widget class="QComboBox" name="comboService"/>
-      </item>
       <item row="0" column="1">
        <widget class="QDateTimeEdit" name="dateTimeEdit"/>
       </item>
+      <item row="1" column="0">
+       <widget class="QComboBox" name="comboService"/>
+      </item>
       <item row="1" column="1">
        <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="btnDelete">
+        <property name="text">
+         <string>Usuń wizytę</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="1">
        <widget class="QPushButton" name="btnAdd">

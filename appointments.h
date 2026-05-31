@@ -28,6 +28,7 @@ public:
 
 private slots:
     void onAddAppointmentClicked();
+    void onDeleteAppointmentClicked();
 
 private:
     Ui::Appointments *ui;
