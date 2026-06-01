@@ -29,6 +29,7 @@ public:
 private slots:
     void onAddAppointmentClicked();
     void onDeleteAppointmentClicked();
+    void onCellChanged(int row, int column);
 
 private:
     Ui::Appointments *ui;

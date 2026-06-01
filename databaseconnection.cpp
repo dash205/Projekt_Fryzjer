@@ -150,6 +150,28 @@ QList<Appointment> DatabaseConnection::getAllAppointments() {
 }
 
 bool DatabaseConnection::updateAppointment(const Appointment &appointment) {
+    QSqlQuery query;
+
+    query.prepare(
+        "UPDATE appointments SET "
+        "client_id = :client_id, "
+        "service_id = :service_id, "
+        "appointment_date = :date, "
+        "notes = :notes "
+        "WHERE id = :id");
+
+    query.bindValue(":client_id", appointment.client_id);
+    query.bindValue(":service_id", appointment.service_id);
+    query.bindValue(":date", appointment.appointment_date.toString("yyyy-MM-dd HH:mm:ss"));
+    query.bindValue(":notes", appointment.notes);
+    query.bindValue(":id", appointment.id);
+
+    if (!query.exec()) {
+        qDebug()<<"Blad przy edytowaniu wizyty: "<<query.lastError().text();
+        return false;
+    }
+    return true;
+
 }
 
 bool DatabaseConnection::deleteAppointment(int id) {

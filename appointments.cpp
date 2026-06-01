@@ -14,12 +14,12 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     ui->tableWidget->setHorizontalHeaderLabels({"Klient", "Usługa", "Data i Godzina", "Cena", "Notatki"});
 
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
     connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
     connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
+    connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
 
     refreshTable();
     setupForm();
@@ -30,8 +30,9 @@ Appointments::~Appointments() {
 }
 
 void Appointments::refreshTable() {
-    QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
+    ui->tableWidget->blockSignals(true);
 
+    QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
 
     for (const auto &app : list) {
@@ -45,6 +46,12 @@ void Appointments::refreshTable() {
         QTableWidgetItem *itemNotes = new QTableWidgetItem(app.notes);
 
         itemClient->setData(Qt::UserRole, app.id);
+        itemClient->setData(Qt::UserRole+1, app.client_id);
+        itemClient->setData(Qt::UserRole+2, app.service_id);
+
+        itemClient->setFlags(itemClient->flags() & ~Qt::ItemIsEditable);
+        itemService->setFlags(itemService->flags() & ~Qt::ItemIsEditable);
+        itemPrice->setFlags(itemPrice->flags() & ~Qt::ItemIsEditable);
 
         ui->tableWidget->setItem(row, 0, itemClient);
         ui->tableWidget->setItem(row, 1, itemService);
@@ -53,6 +60,7 @@ void Appointments::refreshTable() {
         ui->tableWidget->setItem(row, 4, itemNotes);
 
     }
+    ui->tableWidget->blockSignals(false);
 }
 
 void Appointments::setupForm() {
@@ -120,5 +128,42 @@ void Appointments::onDeleteAppointmentClicked() {
         refreshTable();
     } else {
         QMessageBox::critical(this, "Błąd", "Nie udało się usunąć wizyty z bazy danych.");
+    }
+}
+
+void Appointments::onCellChanged(int row, int column) {
+    QTableWidgetItem *idItem = ui->tableWidget->item(row, 0);
+    if (!idItem) return;
+
+    QTableWidgetItem *dateItem = ui->tableWidget->item(row, 2);
+    QTableWidgetItem *notesItem = ui->tableWidget->item(row, 4);
+
+    if (!dateItem || !notesItem) return;
+
+    QString dateStr = dateItem->text();
+    QString notesStr = notesItem->text();
+
+    if (column == 2) {
+        QDateTime checkDate = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
+        if (!checkDate.isValid()) {
+            QMessageBox::warning(this, "Zły format daty", "Wprowadź datę w formacie: YYYY-MM-DD HH:MM");
+            refreshTable();
+            return;
+        }
+    }
+
+    Appointment updatedApp;
+
+    updatedApp.id = idItem->data(Qt::UserRole).toInt();
+    updatedApp.client_id = idItem->data(Qt::UserRole+1).toInt();
+    updatedApp.service_id = idItem->data(Qt::UserRole+2).toInt();
+    updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
+    updatedApp.notes = notesStr;
+
+    if (DatabaseConnection::instance().updateAppointment(updatedApp)) {
+        refreshTable();
+    } else {
+        QMessageBox::critical(this, "Błąd zapisu", "Nie udało się zaktualizować danych.");
+        refreshTable();
     }
 }
