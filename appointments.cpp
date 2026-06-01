@@ -35,29 +35,67 @@ void Appointments::refreshTable() {
     QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
 
+    QList<Service> allServices = DatabaseConnection::instance().getAllServices();
+
     for (const auto &app : list) {
         int row = ui->tableWidget->rowCount();
         ui->tableWidget->insertRow(row);
 
         QTableWidgetItem *itemClient = new QTableWidgetItem(app.client_name);
-        QTableWidgetItem *itemService = new QTableWidgetItem(app.service_name);
+        // QTableWidgetItem *itemService = new QTableWidgetItem(app.service_name);
         QTableWidgetItem *itemDate = new QTableWidgetItem(app.appointment_date.toString("yyyy-MM-dd HH:mm"));
         QTableWidgetItem *itemPrice = new QTableWidgetItem(QString::number(app.price, 'f', 2) + " zł");
         QTableWidgetItem *itemNotes = new QTableWidgetItem(app.notes);
 
         itemClient->setData(Qt::UserRole, app.id);
         itemClient->setData(Qt::UserRole+1, app.client_id);
-        itemClient->setData(Qt::UserRole+2, app.service_id);
+        // itemClient->setData(Qt::UserRole+2, app.service_id);
 
         itemClient->setFlags(itemClient->flags() & ~Qt::ItemIsEditable);
-        itemService->setFlags(itemService->flags() & ~Qt::ItemIsEditable);
+        // itemService->setFlags(itemService->flags() & ~Qt::ItemIsEditable);
         itemPrice->setFlags(itemPrice->flags() & ~Qt::ItemIsEditable);
 
+        QComboBox *rowComboService = new QComboBox(ui->tableWidget);
+
+        for (const auto &s: allServices) {
+            rowComboService->addItem(s.name, s.id);
+        }
+
+        int currentIndex = rowComboService->findData(app.service_id);
+        rowComboService->setCurrentIndex(currentIndex);
+
         ui->tableWidget->setItem(row, 0, itemClient);
-        ui->tableWidget->setItem(row, 1, itemService);
+        ui->tableWidget->setCellWidget(row, 1, rowComboService);
         ui->tableWidget->setItem(row, 2, itemDate);
         ui->tableWidget->setItem(row, 3, itemPrice);
         ui->tableWidget->setItem(row, 4, itemNotes);
+
+        int appointmentId = app.id;
+        int clientId = app.client_id;
+
+        connect(rowComboService, &QComboBox::activated, this, [this, appointmentId, clientId, row]() {
+            //Wskaznik na ComboBox z edytowanego wiersza
+            QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(row, 1));
+            if (!combo) return;
+
+            int newServiceId = combo->currentData().toInt();
+            QString dateStr = ui->tableWidget->item(row, 2)->text();
+            QString notesStr = ui->tableWidget->item(row, 4)->text();
+
+            Appointment updatedApp;
+            updatedApp.id = appointmentId;
+            updatedApp.client_id = clientId;
+            updatedApp.service_id = newServiceId;
+            updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
+            updatedApp.notes = notesStr;
+
+            if (DatabaseConnection::instance().updateAppointment(updatedApp)) {
+                refreshTable();
+            } else {
+                QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować usługi.");
+                refreshTable();
+            }
+        });
 
     }
     ui->tableWidget->blockSignals(false);
@@ -135,9 +173,12 @@ void Appointments::onCellChanged(int row, int column) {
     QTableWidgetItem *idItem = ui->tableWidget->item(row, 0);
     if (!idItem) return;
 
+    QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(row, 1));
+    if (!combo) return;
+    int currentServiceId = combo->currentData().toInt();
+
     QTableWidgetItem *dateItem = ui->tableWidget->item(row, 2);
     QTableWidgetItem *notesItem = ui->tableWidget->item(row, 4);
-
     if (!dateItem || !notesItem) return;
 
     QString dateStr = dateItem->text();
@@ -153,10 +194,9 @@ void Appointments::onCellChanged(int row, int column) {
     }
 
     Appointment updatedApp;
-
     updatedApp.id = idItem->data(Qt::UserRole).toInt();
     updatedApp.client_id = idItem->data(Qt::UserRole+1).toInt();
-    updatedApp.service_id = idItem->data(Qt::UserRole+2).toInt();
+    updatedApp.service_id = currentServiceId;
     updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
     updatedApp.notes = notesStr;
 
