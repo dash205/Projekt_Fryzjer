@@ -35,7 +35,7 @@ void Appointments::refreshTable() {
     QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
 
-    QList<Service> allServices = DatabaseConnection::instance().getAllServices2();
+    QList<Service> allServices = DatabaseConnection::instance().getAllServices();
 
     for (const auto &app : list) {
         int row = ui->tableWidget->rowCount();
@@ -105,13 +105,13 @@ void Appointments::setupForm() {
     ui->comboClient->clear();
     ui->comboService->clear();
 
-    QList<Client> clients = DatabaseConnection::instance().getAllClients2();
+    QList<Client> clients = DatabaseConnection::instance().getAllClients();
     for (const auto& client : clients) {
         QString fullName = client.first_name + " " + client.last_name;
         ui->comboClient->addItem(fullName, client.id);
     }
 
-    QList<Service> services = DatabaseConnection::instance().getAllServices2();
+    QList<Service> services = DatabaseConnection::instance().getAllServices();
     for (const auto& service : services) {
         ui->comboService->addItem(service.name, service.id);
     }
