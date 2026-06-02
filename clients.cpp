@@ -1,5 +1,5 @@
 #include "clients.h"
-#include "ui_clients.h" // Ta linijka naprawia błąd "incomplete type"
+#include "ui_clients.h"
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlTableModel>

@@ -33,23 +33,19 @@ bool DatabaseConnection::openConnection() {
 //     return true;
 // }
 
-bool DatabaseConnection::addClient(const Client &client)
-{
+bool DatabaseConnection::addClient(const Client &client) {
 
 }
 
-QList<Client> DatabaseConnection::getAllClients()
-{
+QList<Client> DatabaseConnection::getAllClients() {
 
 }
 
-bool DatabaseConnection::updateClient(const Client &client)
-{
+bool DatabaseConnection::updateClient(const Client &client) {
 
 }
 
-bool DatabaseConnection::deleteClient(int id)
-{
+bool DatabaseConnection::deleteClient(int id) {
 
 }
 
