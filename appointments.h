@@ -21,8 +21,15 @@ class Appointments : public QWidget {
 
 public:
     explicit Appointments(QWidget *parent = nullptr);
-
     ~Appointments() override;
+
+    void refreshTable();
+    void setupForm();
+
+private slots:
+    void onAddAppointmentClicked();
+    void onDeleteAppointmentClicked();
+    void onCellChanged(int row, int column);
 
 private:
     Ui::Appointments *ui;

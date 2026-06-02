@@ -9,31 +9,23 @@
 #include "appointmentClass.h"
 #include "serviceData.h"
 #include "clientClass.h"
+#include "serviceClass.h"
 
 class DatabaseConnection {
 public:
     static DatabaseConnection& instance();
 
     bool openConnection();
-    // Klient
-    bool addClient(const Client& client);
+    //Klienci
     QList<Client> getAllClients();
-    bool updateClient(const Client& client);
-    bool deleteClient(int id);
-    // Uslugi
-    bool addService(const ServiceData& service);
-    QList<ServiceData> getAllServices();
-    bool updateService(const ServiceData& service);
-    bool deleteService(int id);
-    //Wizyty
+    //Usługi
+    QList<Service> getAllServices();
     bool CanServicesBeDeleted(const ServiceData& service);
+    //Wizyty
     bool addAppointment(const Appointment& appointment);
     QList<Appointment> getAllAppointments();
     bool updateAppointment(const Appointment& appointment);
     bool deleteAppointment(int id);
-
-    QList<Client> getAllClients2();
-    QList<Service> getAllServices2();
 
 private:
     DatabaseConnection() = default;

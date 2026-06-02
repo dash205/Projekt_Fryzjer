@@ -1,5 +1,5 @@
-#ifndef PROJEKT_FRYZJER_SERVICECLASS_H
-#define PROJEKT_FRYZJER_SERVICECLASS_H
+#ifndef PROJEKT_FRYZJER_SERVICEDATA_H
+#define PROJEKT_FRYZJER_SERVICEDATA_H
 
 #include <QString>
 
@@ -10,4 +10,4 @@ struct ServiceData {
     int duration_minutes;
 };
 
-#endif //PROJEKT_FRYZJER_SERVICECLASS_H
+#endif //PROJEKT_FRYZJER_SERVICEDATA_H

@@ -1,15 +1,28 @@
-//
-// Created by Artur on 19.05.2026.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_Appointments.h" resolved
-
 #include "appointments.h"
 #include "ui_appointments.h"
+#include "databaseconnection.h"
+#include "appointmentClass.h"
 
+#include <QHeaderView>
+#include <QTableWidgetItem>
+#include <QMessageBox>
 
 Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appointments) {
     ui->setupUi(this);
+
+    ui->tableWidget->setColumnCount(5);
+    ui->tableWidget->setHorizontalHeaderLabels({"Klient", "Usługa", "Data i Godzina", "Cena", "Notatki"});
+
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+    connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
+    connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
+    connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
+
+    refreshTable();
+    setupForm();
 }
 
 Appointments::~Appointments() {
@@ -22,7 +35,7 @@ void Appointments::refreshTable() {
     QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
 
-    QList<Service> allServices = DatabaseConnection::instance().getAllServices2();
+    QList<Service> allServices = DatabaseConnection::instance().getAllServices();
 
     for (const auto &app : list) {
         int row = ui->tableWidget->rowCount();
@@ -92,13 +105,13 @@ void Appointments::setupForm() {
     ui->comboClient->clear();
     ui->comboService->clear();
 
-    QList<Client> clients = DatabaseConnection::instance().getAllClients2();
+    QList<Client> clients = DatabaseConnection::instance().getAllClients();
     for (const auto& client : clients) {
         QString fullName = client.first_name + " " + client.last_name;
         ui->comboClient->addItem(fullName, client.id);
     }
 
-    QList<Service> services = DatabaseConnection::instance().getAllServices2();
+    QList<Service> services = DatabaseConnection::instance().getAllServices();
     for (const auto& service : services) {
         ui->comboService->addItem(service.name, service.id);
     }
