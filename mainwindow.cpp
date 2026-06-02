@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     int servicesIndex = ui->stackedWidget->addWidget(servicesPage);
 
     Appointments *appointmentsPage = new Appointments(this);
-    int appointmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
+    int apponmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
 }
 
 MainWindow::~MainWindow()

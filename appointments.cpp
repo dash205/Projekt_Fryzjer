@@ -1,28 +1,15 @@
+//
+// Created by Artur on 19.05.2026.
+//
+
+// You may need to build the project (run Qt uic code generator) to get "ui_Appointments.h" resolved
+
 #include "appointments.h"
 #include "ui_appointments.h"
-#include "databaseconnection.h"
-#include "appointmentClass.h"
 
-#include <QHeaderView>
-#include <QTableWidgetItem>
-#include <QMessageBox>
 
 Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appointments) {
     ui->setupUi(this);
-
-    ui->tableWidget->setColumnCount(5);
-    ui->tableWidget->setHorizontalHeaderLabels({"Klient", "Usługa", "Data i Godzina", "Cena", "Notatki"});
-
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
-
-    connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
-    connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
-    connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
-
-    refreshTable();
-    setupForm();
 }
 
 Appointments::~Appointments() {
