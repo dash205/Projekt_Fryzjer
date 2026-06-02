@@ -4,7 +4,6 @@
 #include <QString>
 
 class Client {
-public:
     int id=0;
     QString first_name;
     QString last_name;
