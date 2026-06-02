@@ -34,19 +34,15 @@ bool DatabaseConnection::openConnection() {
 // }
 
 bool DatabaseConnection::addClient(const Client &client) {
-
 }
 
 QList<Client> DatabaseConnection::getAllClients() {
-
 }
 
 bool DatabaseConnection::updateClient(const Client &client) {
-
 }
 
 bool DatabaseConnection::deleteClient(int id) {
-
 }
 
 bool DatabaseConnection::addService(const Service &service) {
