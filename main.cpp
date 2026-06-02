@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // DatabaseConnection::instance().addClient("krzysiek3");
 
     MainWindow w;
     w.show();
