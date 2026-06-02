@@ -4,6 +4,7 @@
 #include <QString>
 
 class Service {
+public:
     int id=0;
     QString name;
     double price;
