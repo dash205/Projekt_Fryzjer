@@ -77,3 +77,40 @@ bool DatabaseConnection::updateAppointment(const Appointment &appointment) {
 
 bool DatabaseConnection::deleteAppointment(int id) {
 }
+
+QList<Client> DatabaseConnection::getAllClients2() {
+    QList<Client> list;
+    QSqlQuery query("SELECT id, first_name, last_name FROM clients");
+
+    if (!query.exec()) {
+        qDebug()<<query.lastError().text();
+        return list;
+    }
+
+    while (query.next()) {
+        Client c;
+        c.id = query.value("id").toInt();
+        c.first_name = query.value("first_name").toString();
+        c.last_name = query.value("last_name").toString();
+        list.append(c);
+    }
+    return list;
+}
+
+QList<Service> DatabaseConnection::getAllServices2() {
+    QList<Service> list;
+    QSqlQuery query("SELECT id, name FROM services");
+
+    if (!query.exec()) {
+        qDebug()<<query.lastError().text();
+        return list;
+    }
+
+    while (query.next()) {
+        Service s;
+        s.id = query.value("id").toInt();
+        s.name = query.value("name").toString();
+        list.append(s);
+    }
+    return list;
+}

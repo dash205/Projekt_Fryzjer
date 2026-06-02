@@ -32,6 +32,9 @@ public:
     bool updateAppointment(const Appointment& appointment);
     bool deleteAppointment(int id);
 
+    QList<Client> getAllClients2();
+    QList<Service> getAllServices2();
+
 private:
     DatabaseConnection() = default;
     QSqlDatabase m_db;
