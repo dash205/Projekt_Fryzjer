@@ -19,21 +19,16 @@ bool DatabaseConnection::openConnection() {
     return true;
 }
 
-// bool DatabaseConnection::addClient(const Client &client) {
-//     QSqlQuery query(m_db);
-//
-//     query.prepare("INSERT INTO client (name) VALUES (:name)");
-//
-//     query.bindValue(":name", name);
-//
-//     if(!query.exec()) {
-//         qDebug()<<"Blad dodwania klienta"<<query.lastError().text();
-//         return false;
-//     }
-//     return true;
-// }
+bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
+{
+    QSqlQuery query(m_db);
+    query.prepare("Select a.* from appointments a "
+                  "join services s on s.id = a.service_id where s.id = (:id)");
+    query.bindValue(":id", service.id);
 
-bool DatabaseConnection::addClient(const Client &client) {
+    if (!query.exec()) {qDebug()<<query.lastError().text(); return false;}
+
+    return query.next();
 }
 
 QList<Client> DatabaseConnection::getAllClients() {
@@ -55,15 +50,6 @@ QList<Client> DatabaseConnection::getAllClients() {
     return list;
 }
 
-bool DatabaseConnection::updateClient(const Client &client) {
-}
-
-bool DatabaseConnection::deleteClient(int id) {
-}
-
-bool DatabaseConnection::addService(const Service &service) {
-}
-
 QList<Service> DatabaseConnection::getAllServices() {
     QList<Service> list;
     QSqlQuery query("SELECT id, name FROM services");
@@ -82,12 +68,6 @@ QList<Service> DatabaseConnection::getAllServices() {
     return list;
 }
 
-bool DatabaseConnection::updateService(const Service &service) {
-}
-
-bool DatabaseConnection::deleteService(int id) {
-}
-
 bool DatabaseConnection::addAppointment(const Appointment &appointment) {
     QSqlQuery query;
     query.prepare(
@@ -97,7 +77,7 @@ bool DatabaseConnection::addAppointment(const Appointment &appointment) {
     query.bindValue(":client_id", appointment.client_id);
     query.bindValue(":service_id", appointment.service_id);
     query.bindValue(":date", appointment.appointment_date);
-    query.bindValue(":notes", appointment.notes);   
+    query.bindValue(":notes", appointment.notes);
 
     if (!query.exec()) {
         qDebug()<<"Blad dodawania wizyty"<<query.lastError().text();
