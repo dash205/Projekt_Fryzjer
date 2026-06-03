@@ -20,6 +20,7 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
     connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
     connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
+    connect(ui->btnDialogAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentDialogClicked);
 
     refreshTable();
     setupForm();
@@ -206,4 +207,8 @@ void Appointments::onCellChanged(int row, int column) {
         QMessageBox::critical(this, "Błąd zapisu", "Nie udało się zaktualizować danych.");
         refreshTable();
     }
+}
+
+void Appointments::onAddAppointmentDialogClicked() {
+
 }
