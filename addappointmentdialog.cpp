@@ -10,6 +10,7 @@
 #include "appointmentClass.h"
 
 #include <QMessageBox>
+#include <QCompleter>
 
 
 addappointmentdialog::addappointmentdialog(QWidget *parent) : QDialog(parent), ui(new Ui::addappointmentdialog) {
@@ -33,6 +34,10 @@ void addappointmentdialog::setupForm() {
         QString fullName = client.first_name + " " + client.last_name;
         ui->comboClient->addItem(fullName, client.id);
     }
+
+    ui->comboClient->setEditable(true);
+    ui->comboClient->setInsertPolicy(QComboBox::NoInsert);
+    ui->comboClient->completer()->setFilterMode(Qt::MatchContains);
 
     QList<Service> services = DatabaseConnection::instance().getAllServices();
     for (const auto& service : services) {

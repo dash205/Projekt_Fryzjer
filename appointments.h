@@ -6,6 +6,7 @@
 #define PROJEKT_FRYZJER_APPOINTMENTS_H
 
 #include <QWidget>
+#include <QSet>
 
 
 QT_BEGIN_NAMESPACE
@@ -29,9 +30,13 @@ private slots:
     void onDeleteAppointmentClicked();
     void onCellChanged(int row, int column);
     void onAddAppointmentDialogClicked();
+    void onSaveAllClicked();
+    void onCancelChangesClicked();
 
 private:
     Ui::Appointments *ui;
+
+    QSet<int> modifiedAppointmentIds;
 };
 
 

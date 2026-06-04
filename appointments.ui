@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>809</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1000</width>
-    <height>600</height>
+    <height>700</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1000</width>
-    <height>16777215</height>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
      <x>0</x>
      <y>10</y>
      <width>1001</width>
-     <height>731</height>
+     <height>681</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -91,6 +91,20 @@
        <widget class="QPushButton" name="btnDelete">
         <property name="text">
          <string>Usuń wizytę</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnSaveAll">
+        <property name="text">
+         <string>Zapisz zmiany</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnCancelChanges">
+        <property name="text">
+         <string>Anuluj zmiany</string>
         </property>
        </widget>
       </item>
