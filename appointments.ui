@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>684</height>
+    <height>809</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,13 +28,53 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>-1</x>
-     <y>-1</y>
+     <x>0</x>
+     <y>10</y>
      <width>1001</width>
-     <height>671</height>
+     <height>731</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1,1">
+      <item>
+       <widget class="QLabel" name="labelSearch">
+        <property name="text">
+         <string>Wyszukiwanie:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="inputSearch"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="labelSort">
+        <property name="text">
+         <string>Sortowanie</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboSort">
+        <item>
+         <property name="text">
+          <string>Według daty (od najnowszych)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Według daty (od najstarszych)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Według klientów (A-Z)</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item>
      <widget class="QTableWidget" name="tableWidget"/>
     </item>

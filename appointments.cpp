@@ -7,6 +7,7 @@
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QComboBox>
+#include <algorithm>
 
 #include "addappointmentdialog.h"
 
@@ -23,6 +24,8 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     connect(ui->btnDialogAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentDialogClicked);
     connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
     connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
+    connect(ui->inputSearch, &QLineEdit::textChanged, this, &Appointments::refreshTable);
+    connect(ui->comboSort, &QComboBox::currentIndexChanged, this, &Appointments::refreshTable);
 
     refreshTable();
 }
@@ -36,6 +39,31 @@ void Appointments::refreshTable() {
 
     QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
+
+    QString filterText= ui->inputSearch->text().trimmed();
+    if (!filterText.isEmpty()) {
+        QList<Appointment> filteredList;
+        for (const auto &app : list) {
+            if (app.client_name.contains(filterText, Qt::CaseInsensitive) ||
+                app.notes.contains(filterText, Qt::CaseInsensitive)) {
+                filteredList.append(app);
+            }
+        }
+        list = filteredList;
+    }
+
+    int sortIndex = ui->comboSort->currentIndex();
+
+    std::sort(list.begin(), list.end(), [sortIndex](const Appointment &a, const Appointment &b) {
+        if (sortIndex == 0) {
+            return a.appointment_date > b.appointment_date;
+        } else if (sortIndex == 1) {
+            return a.appointment_date < b.appointment_date;
+        } else if (sortIndex == 2) {
+            return a.client_name.localeAwareCompare(b.client_name) < 0;
+        }
+        return false;
+    });
 
     QList<Service> allServices = DatabaseConnection::instance().getAllServices();
 
