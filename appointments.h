@@ -24,10 +24,8 @@ public:
     ~Appointments() override;
 
     void refreshTable();
-    void setupForm();
 
 private slots:
-    void onAddAppointmentClicked();
     void onDeleteAppointmentClicked();
     void onCellChanged(int row, int column);
     void onAddAppointmentDialogClicked();
