@@ -1,6 +1,5 @@
 #include "mainwindow.h"
-#include "databaseconnection.h"
-
+#include "logindialog.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -12,7 +11,8 @@ int main(int argc, char *argv[])
     }
 
     // DatabaseConnection::instance().addClient("krzysiek3");
-
+    LoginDialog login;
+    if (login.exec() != QDialog::Accepted){ return 0;}
     MainWindow w;
     w.show();
 

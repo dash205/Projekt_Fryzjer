@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "clients.h"
 #include "services.h"
+#include "users.h"
 #include "appointments.h"
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +26,7 @@ private slots:
     void on_actionMain_triggered();
     void on_actionServices_triggered();
     void on_actionAppointments_triggered();
+    void on_actionUsers_triggered();
 
 private:
     Ui::MainWindow *ui;

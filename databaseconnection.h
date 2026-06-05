@@ -1,3 +1,4 @@
+#pragma once
 #include <QCoreApplication>
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -9,11 +10,13 @@
 #include "appointmentClass.h"
 #include "serviceData.h"
 #include "clientClass.h"
+#include "logindialogdata.h"
 #include "serviceClass.h"
 
 class DatabaseConnection {
 public:
     static DatabaseConnection& instance();
+    int currentUserId{};
 
     bool openConnection();
     //Klienci
@@ -27,6 +30,13 @@ public:
     bool updateAppointment(const Appointment& appointment);
     bool deleteAppointment(int id);
 
+    bool sign_correctness(const QString& username, const QString& password);
+    bool LoginExist(const QString& username);
+    bool verifyPassword(const QString& password, const QString& hashedPassword);
+    QString getCurrentAdminPassword(const int& id);
+    bool autorisationCheck(const int& id);
+    bool passwordChange(const QString& username, const QString& password);
+    QString getUsername(const int& id);
 private:
     DatabaseConnection() = default;
     QSqlDatabase m_db;
