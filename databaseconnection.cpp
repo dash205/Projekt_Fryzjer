@@ -1,5 +1,8 @@
 #include "databaseconnection.h"
 
+#include <QCryptographicHash>
+#include <QMessageBox>
+
 DatabaseConnection& DatabaseConnection::instance() {
     static DatabaseConnection inst;
     return inst;
@@ -166,4 +169,103 @@ bool DatabaseConnection::deleteAppointment(int id) {
         return false;
     }
     return true;
+}
+
+bool DatabaseConnection::sign_correctness(const QString& login, const QString& password)
+{
+    QSqlQuery query;
+
+    query.prepare( "Select user_id, password from users WHERE login = :login");
+    query.bindValue(":login", login);
+    if (!query.exec())
+    {
+        qDebug()<<query.lastError().text(); return false;
+    }
+    if (!query.next()) return false;
+
+    int id = query.value("user_id").toInt();
+
+    QString hashedPassword = query.value("password").toString();
+
+    if (verifyPassword(password, hashedPassword))
+    {
+        instance().currentUserId = id;
+        return true;
+    }
+    return false;
+}
+
+bool DatabaseConnection::verifyPassword(const QString& password, const QString& hashedPassword)
+{
+    auto parts = hashedPassword.split(":");
+    if (parts.size() != 2) { return false; }
+
+    QByteArray salt =QByteArray::fromBase64(parts[0].toUtf8());
+    QByteArray expectedHash = QByteArray::fromBase64(parts[1].toUtf8());
+
+    QByteArray data = salt + password.toUtf8();
+    QByteArray testHash = QCryptographicHash::hash(data, QCryptographicHash::Sha256);
+
+    if (expectedHash.size() != testHash.size()) { return false; }
+    int diff = 0;
+    for (int i = 0; i < testHash.size(); i++)
+    {
+        diff |= static_cast<unsigned char>(testHash[i] ^ expectedHash[i]);
+    }
+    return diff == 0;
+}
+
+
+bool DatabaseConnection::LoginExist(const QString& username)
+{
+    QSqlQuery query;
+    query.prepare("Select login from users where login = :login");
+    query.bindValue(":login", username);
+    if (!query.exec())
+    {
+        qDebug()<<query.lastError().text();
+    }
+    return query.next();
+}
+
+bool DatabaseConnection::autorisationCheck(const int& id)
+{
+    QSqlQuery query;
+    query.prepare("Select user_type from users where user_id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec())
+    {
+        qDebug()<<query.lastError().text();
+    }
+    if (!query.next()) return false;
+    qDebug()<<"Typ:"<<query.value("user_type").toString();
+    return "admin"==query.value("user_type").toString();
+}
+
+QString DatabaseConnection::getUsername(const int& id)
+{
+    QSqlQuery query;
+    query.prepare("Select user_name from users where user_id = :id");
+    query.bindValue(":id", id);
+    if (!query.exec())
+    {
+        qDebug()<<query.lastError().text();
+    }
+    if (!query.next()) return "";
+    return query.value("user_name").toString();
+}
+
+QString DatabaseConnection::getCurrentAdminPassword(const int& id)
+{
+    QSqlQuery query;
+    query.prepare("Select password from users where user_id = :user_id");
+    query.bindValue(":user_id", id);
+    if (!query.exec())
+    {
+        qDebug()<<query.lastError().text();
+
+    }
+    if (!query.next()) return "";
+
+    return query.value("password").toString();
 }

@@ -51,7 +51,6 @@ AddServiceDialog::AddServiceDialog(QWidget* parent) :
 {
     ui->setupUi(this);
     ui->ServicePrice->setMaximum(9999.99);
-    /*connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &AddServiceDialog::on_buttonBox_accepted);*/
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
