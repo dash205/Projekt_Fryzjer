@@ -36,28 +36,28 @@
      <item>
       <widget class="QPushButton" name="btnAdd">
        <property name="text">
-        <string>Dodaj Klienta</string>
+        <string>Dodaj klienta</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnDelete">
        <property name="text">
-        <string>Usuń Klienta</string>
+        <string>Usuń klienta</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnSave">
        <property name="text">
-        <string>Zapisz Zmiany</string>
+        <string>Zapisz zmiany</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnRevert">
        <property name="text">
-        <string>Anuluj zmiany</string>
+        <string>Cofnij zmiany</string>
        </property>
       </widget>
      </item>

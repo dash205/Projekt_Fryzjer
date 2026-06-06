@@ -93,7 +93,7 @@ void Clients::on_btnSave_clicked() {
 }
 
 void Clients::on_btnRevert_clicked() {
-    QString cancel = QString("Czy na pewno chcesz anulować zmiany?");
+    QString cancel = QString("Czy na pewno chcesz cofnąć zmiany?");
 
     if (confirmation("Potwierdzenie anulowania", cancel)) {
         clientModel->revertAll();

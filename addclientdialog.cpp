@@ -58,11 +58,11 @@ QString AddClientDialog::getPhone() const
 
 void AddClientDialog::on_buttonBox_accepted()
 {
-    // if (ui->lineEditFirstName->text().isEmpty() || ui->lineEditLastName->text().isEmpty() || ui->lineEditEmail->text().isEmpty() || ui->lineEditPhone->text().isEmpty())
-    // {
-    //     QMessageBox::warning(this, "Uwaga", "Uzupełnij wszystkie pola");
-    //     return;
-    // }
+    if (ui->lineEditFirstName->text().isEmpty() || ui->lineEditLastName->text().isEmpty() || ui->lineEditEmail->text().isEmpty() || ui->lineEditPhone->text().isEmpty())
+    {
+        QMessageBox::warning(this, "Uwaga", "Uzupełnij wszystkie pola");
+        return;
+    }
 
     //walidacja danych
 
