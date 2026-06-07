@@ -18,100 +18,94 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>1000</width>
-    <height>700</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Appointments</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>10</y>
-     <width>1001</width>
-     <height>681</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1,1">
-      <item>
-       <widget class="QLabel" name="labelSearch">
-        <property name="text">
-         <string>Wyszukiwanie:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="inputSearch"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelSort">
-        <property name="text">
-         <string>Sortowanie</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="comboSort">
-        <item>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1,1">
+       <item>
+        <widget class="QLabel" name="labelSearch">
          <property name="text">
-          <string>Według daty (od najnowszych)</string>
+          <string>Wyszukiwanie:</string>
          </property>
-        </item>
-        <item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="inputSearch"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelSort">
          <property name="text">
-          <string>Według daty (od najstarszych)</string>
+          <string>Sortowanie</string>
          </property>
-        </item>
-        <item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboSort">
+         <item>
+          <property name="text">
+           <string>Według daty (od najnowszych)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Według daty (od najstarszych)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Według klientów (A-Z)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tableWidget"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="btnDialogAdd">
          <property name="text">
-          <string>Według klientów (A-Z)</string>
+          <string>Dodaj wizytę</string>
          </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="tableWidget"/>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="btnDialogAdd">
-        <property name="text">
-         <string>Dodaj wizytę</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnDelete">
-        <property name="text">
-         <string>Usuń wizytę</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnSaveAll">
-        <property name="text">
-         <string>Zapisz zmiany</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnCancelChanges">
-        <property name="text">
-         <string>Anuluj zmiany</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDelete">
+         <property name="text">
+          <string>Usuń wizytę</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnSaveAll">
+         <property name="text">
+          <string>Zapisz zmiany</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnCancelChanges">
+         <property name="text">
+          <string>Anuluj zmiany</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
