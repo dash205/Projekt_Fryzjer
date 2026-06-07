@@ -5,6 +5,7 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_AddServiceDialog.h" resolved
 
 #include "addservicedialog.h"
+#include "addservicedialog.h"
 #include "ui_addservicedialog.h"
 #include <QMessageBox>
 
@@ -46,12 +47,19 @@ void AddServiceDialog::on_buttonBox_accepted()
     }
     QDialog::accept();
 }
-AddServiceDialog::AddServiceDialog(QWidget* parent) :
+AddServiceDialog::AddServiceDialog(dialogMode mode,QWidget* parent) :
     QDialog(parent), ui(new Ui::AddServiceDialog)
 {
-    ui->setupUi(this);
-    ui->ServicePrice->setMaximum(9999.99);
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+        ui->setupUi(this);
+        ui->ServicePrice->setMaximum(9999.99);
+        connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    switch (mode)
+    {
+    case dialogMode::add: setWindowTitle("Dodaj usługę"); break;
+    case dialogMode::edit: setWindowTitle("Modyfikuj usługę"); break;
+    }
+    setFixedSize(this->size());
+
 }
 
 AddServiceDialog::~AddServiceDialog()

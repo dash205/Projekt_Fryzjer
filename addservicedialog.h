@@ -22,7 +22,9 @@ class AddServiceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddServiceDialog(QWidget* parent = nullptr);
+    enum class dialogMode{add, edit};
+    
+    explicit AddServiceDialog(dialogMode mode, QWidget* parent = nullptr);
     ~AddServiceDialog() override;
     QString getName() const;
     double getPrice() const;
@@ -30,10 +32,10 @@ public:
     void setName(const QString& name);
     void setPrice(double price);
     void setDuration(int duration);
+    Ui::AddServiceDialog* ui;
 protected:
     void closeEvent(QCloseEvent* event) override;
 private:
-    Ui::AddServiceDialog* ui;
     private slots:
     void on_buttonBox_accepted();
 

@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>resources/norzyczki_icon.png</file>
+        <file>resources/norzyczki.png</file>
+    </qresource>
+</RCC>

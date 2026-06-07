@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "databaseconnection.h"
+#include  <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,6 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
         int usersIndex = ui->stackedWidget->addWidget(usersPage);
         connect(ui->actionUsers, &QAction::triggered, this, &MainWindow::on_actionUsers_triggered);
     }
+    /*QPixmap pixmap(":/resources/norzyczki.png");
+    if (pixmap.isNull())
+    {
+        qDebug()<<"pixmap error";
+    }else
+    {
+        ui->icon->setPixmap(pixmap);
+        ui->icon->setScaledContents(true);
+    }*/
 }
 
 MainWindow::~MainWindow()
