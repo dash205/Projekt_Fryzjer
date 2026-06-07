@@ -56,7 +56,7 @@ void addappointmentdialog::onSaveClicked() {
     Appointment newApp;
 
     newApp.client_id = ui->comboClient->currentData().toInt();
-    newApp.service_id = ui->comboClient->currentData().toInt();
+    newApp.service_id = ui->comboService->currentData().toInt();
     newApp.appointment_date = ui->dateTimeEdit->dateTime();
     newApp.notes = ui->inputNotes->text();
 
