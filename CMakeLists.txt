@@ -46,6 +46,9 @@ set(PROJECT_SOURCES
         userdialog.cpp
         userdialog.h
         userdialog.ui
+        addclientdialog.cpp
+        addclientdialog.h
+        addclientdialog.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

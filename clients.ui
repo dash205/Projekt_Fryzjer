@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Clients</class>
- <widget class="QWidget" name="clients">
+ <widget class="QWidget" name="Clients">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>819</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,23 +15,50 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Filtruj:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="lineEditSearch"/>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QTableView" name="tableView"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btnAdd">
-       <property name="text"><string>Dodaj Klienta</string></property>
+       <property name="text">
+        <string>Dodaj klienta</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnDelete">
-       <property name="text"><string>Usuń Klienta</string></property>
+       <property name="text">
+        <string>Usuń klienta</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnSave">
-       <property name="text"><string>Zapisz Zmiany</string></property>
+       <property name="text">
+        <string>Zapisz zmiany</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRevert">
+       <property name="text">
+        <string>Cofnij zmiany</string>
+       </property>
       </widget>
      </item>
     </layout>

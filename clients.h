@@ -21,10 +21,15 @@ private slots:
     void on_btnAdd_clicked();
     void on_btnDelete_clicked();
     void on_btnSave_clicked();
+    void on_btnRevert_clicked();
+    void on_lineEditSearch_textChanged(const QString &text) const;
+    void on_tableView_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::Clients *ui;
     QSqlTableModel *clientModel;
+
+    bool confirmation(const QString &title, const QString &message);
 };
 
 #endif //PROJEKT_FRYZJER_CLIENTS_H
