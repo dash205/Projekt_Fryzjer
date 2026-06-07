@@ -6,6 +6,10 @@
 #include <QHeaderView>
 #include <QTableWidgetItem>
 #include <QMessageBox>
+#include <QComboBox>
+#include <algorithm>
+
+#include "addappointmentdialog.h"
 
 Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appointments) {
     ui->setupUi(this);
@@ -17,12 +21,17 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-    connect(ui->btnAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentClicked);
+    connect(ui->btnDialogAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentDialogClicked);
     connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
     connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
 
+    connect(ui->inputSearch, &QLineEdit::textChanged, this, &Appointments::refreshTable);
+    connect(ui->comboSort, &QComboBox::currentIndexChanged, this, &Appointments::refreshTable);
+
+    connect(ui->btnSaveAll, &QPushButton::clicked, this, &Appointments::onSaveAllClicked);
+    connect(ui->btnCancelChanges, &QPushButton::clicked, this, &Appointments::onCancelChangesClicked);
+
     refreshTable();
-    setupForm();
 }
 
 Appointments::~Appointments() {
@@ -32,8 +41,35 @@ Appointments::~Appointments() {
 void Appointments::refreshTable() {
     ui->tableWidget->blockSignals(true);
 
+    modifiedAppointmentIds.clear();
+
     QList<Appointment> list = DatabaseConnection::instance().getAllAppointments();
     ui->tableWidget->setRowCount(0);
+
+    QString filterText= ui->inputSearch->text().trimmed();
+    if (!filterText.isEmpty()) {
+        QList<Appointment> filteredList;
+        for (const auto &app : list) {
+            if (app.client_name.contains(filterText, Qt::CaseInsensitive) ||
+                app.notes.contains(filterText, Qt::CaseInsensitive)) {
+                filteredList.append(app);
+            }
+        }
+        list = filteredList;
+    }
+
+    int sortIndex = ui->comboSort->currentIndex();
+
+    std::sort(list.begin(), list.end(), [sortIndex](const Appointment &a, const Appointment &b) {
+        if (sortIndex == 0) {
+            return a.appointment_date > b.appointment_date;
+        } else if (sortIndex == 1) {
+            return a.appointment_date < b.appointment_date;
+        } else if (sortIndex == 2) {
+            return a.client_name.localeAwareCompare(b.client_name) < 0;
+        }
+        return false;
+    });
 
     QList<Service> allServices = DatabaseConnection::instance().getAllServices();
 
@@ -56,8 +92,7 @@ void Appointments::refreshTable() {
         itemPrice->setFlags(itemPrice->flags() & ~Qt::ItemIsEditable);
 
         QComboBox *rowComboService = new QComboBox(ui->tableWidget);
-
-        for (const auto &s: allServices) {
+        for (const auto &s : allServices) {
             rowComboService->addItem(s.name, s.id);
         }
 
@@ -71,75 +106,13 @@ void Appointments::refreshTable() {
         ui->tableWidget->setItem(row, 4, itemNotes);
 
         int appointmentId = app.id;
-        int clientId = app.client_id;
 
-        connect(rowComboService, &QComboBox::activated, this, [this, appointmentId, clientId, row]() {
-            //Wskaznik na ComboBox z edytowanego wiersza
-            QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(row, 1));
-            if (!combo) return;
-
-            int newServiceId = combo->currentData().toInt();
-            QString dateStr = ui->tableWidget->item(row, 2)->text();
-            QString notesStr = ui->tableWidget->item(row, 4)->text();
-
-            Appointment updatedApp;
-            updatedApp.id = appointmentId;
-            updatedApp.client_id = clientId;
-            updatedApp.service_id = newServiceId;
-            updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
-            updatedApp.notes = notesStr;
-
-            if (DatabaseConnection::instance().updateAppointment(updatedApp)) {
-                refreshTable();
-            } else {
-                QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować usługi.");
-                refreshTable();
-            }
+        connect(rowComboService, &QComboBox::activated, this, [this,appointmentId]() {
+           modifiedAppointmentIds.insert(appointmentId);
         });
 
     }
     ui->tableWidget->blockSignals(false);
-}
-
-void Appointments::setupForm() {
-    ui->comboClient->clear();
-    ui->comboService->clear();
-
-    QList<Client> clients = DatabaseConnection::instance().getAllClients();
-    for (const auto& client : clients) {
-        QString fullName = client.first_name + " " + client.last_name;
-        ui->comboClient->addItem(fullName, client.id);
-    }
-
-    QList<Service> services = DatabaseConnection::instance().getAllServices();
-    for (const auto& service : services) {
-        ui->comboService->addItem(service.name, service.id);
-    }
-
-    ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
-
-}
-
-void Appointments::onAddAppointmentClicked() {
-    if (ui->comboClient->currentIndex() == -1 || ui->comboService->currentIndex() == -1) {
-        QMessageBox::warning(this, "Brak danych", "Upewnij się, że w bazie istnieją klienci oraz usługi.");
-        return;
-    }
-    Appointment newApp;
-
-    newApp.client_id = ui->comboClient->currentData().toInt();
-    newApp.service_id = ui->comboClient->currentData().toInt();
-    newApp.appointment_date = ui->dateTimeEdit->dateTime();
-    newApp.notes = ui->lineEdit->text();
-
-    if (DatabaseConnection::instance().addAppointment(newApp)) {
-        refreshTable();
-
-        ui->lineEdit->clear();
-        ui->dateTimeEdit->setDateTime(QDateTime::currentDateTime());
-    } else {
-        QMessageBox::critical(this, "Błąd", "Nie udało się zapisać danych do bazy.");
-    }
 }
 
 void Appointments::onDeleteAppointmentClicked() {
@@ -170,40 +143,93 @@ void Appointments::onDeleteAppointmentClicked() {
 }
 
 void Appointments::onCellChanged(int row, int column) {
+    if (column != 2 && column != 4) return;
+
     QTableWidgetItem *idItem = ui->tableWidget->item(row, 0);
     if (!idItem) return;
 
-    QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(row, 1));
-    if (!combo) return;
-    int currentServiceId = combo->currentData().toInt();
+    int appointmentId = idItem->data(Qt::UserRole).toInt();
 
-    QTableWidgetItem *dateItem = ui->tableWidget->item(row, 2);
-    QTableWidgetItem *notesItem = ui->tableWidget->item(row, 4);
-    if (!dateItem || !notesItem) return;
+    modifiedAppointmentIds.insert(appointmentId);
 
-    QString dateStr = dateItem->text();
-    QString notesStr = notesItem->text();
+}
 
-    if (column == 2) {
-        QDateTime checkDate = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
-        if (!checkDate.isValid()) {
-            QMessageBox::warning(this, "Zły format daty", "Wprowadź datę w formacie: YYYY-MM-DD HH:MM");
-            refreshTable();
-            return;
+void Appointments::onAddAppointmentDialogClicked() {
+    addappointmentdialog dialog(this);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        refreshTable();
+    }
+}
+
+void Appointments::onSaveAllClicked() {
+    if (modifiedAppointmentIds.empty()) {
+        QMessageBox::information(this, "Zapisz zmiany", "Nie wykryto żadnych zmian do zapisania.");
+    }
+
+    for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
+        QTableWidgetItem *idItem = ui->tableWidget->item(row, 0);
+        if (!idItem) continue;
+        int appointmentId = idItem->data(Qt::UserRole).toInt();
+
+        if (modifiedAppointmentIds.contains(appointmentId)) {
+            QString dateStr = ui->tableWidget->item(row, 2)->text();
+            QDateTime checkDate = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
+            if (!checkDate.isValid()) {
+                QMessageBox::warning(this, "Błąd walidacji danych!",QString(
+                    "Wiersz %1 posiada niepoprawny format daty.").arg(row+1));
+                return;
+            }
         }
     }
 
-    Appointment updatedApp;
-    updatedApp.id = idItem->data(Qt::UserRole).toInt();
-    updatedApp.client_id = idItem->data(Qt::UserRole+1).toInt();
-    updatedApp.service_id = currentServiceId;
-    updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
-    updatedApp.notes = notesStr;
+    bool isOk = true;
+    for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
+        QTableWidgetItem *idItem = ui->tableWidget->item(row, 0);
+        if (!idItem) continue;
 
-    if (DatabaseConnection::instance().updateAppointment(updatedApp)) {
-        refreshTable();
+        int appointmentId = idItem->data(Qt::UserRole).toInt();
+
+        if (modifiedAppointmentIds.contains(appointmentId)) {
+            QComboBox *combo = qobject_cast<QComboBox*>(ui->tableWidget->cellWidget(row, 1));
+            int currentServiceId = combo ? combo->currentData().toInt() : 0;
+
+            QString dateStr = ui->tableWidget->item(row, 2)->text();
+            QString notesStr = ui->tableWidget->item(row, 4)->text();
+
+            Appointment updatedApp;
+            updatedApp.id = appointmentId;
+            updatedApp.client_id = idItem->data(Qt::UserRole + 1).toInt();
+            updatedApp.service_id = currentServiceId;
+            updatedApp.appointment_date = QDateTime::fromString(dateStr, "yyyy-MM-dd HH:mm");
+            updatedApp.notes = notesStr;
+
+            if (!DatabaseConnection::instance().updateAppointment(updatedApp)) {
+                isOk = false;
+            }
+        }
+    }
+
+    if (isOk) {
+        if (!modifiedAppointmentIds.empty()) {
+            QMessageBox::information(this, "Sukces", "Wszystkie zmiany zostały zapisane");
+        }
     } else {
-        QMessageBox::critical(this, "Błąd zapisu", "Nie udało się zaktualizować danych.");
+        QMessageBox::critical(this, "Błąd", "Wystąpił błąd podczas aktualizacji danych.");
+    }
+
+    refreshTable();
+
+}
+
+void Appointments::onCancelChangesClicked() {
+    if (modifiedAppointmentIds.empty()) return;
+
+    auto reply = QMessageBox::question(this, "Anulowanie zmian",
+        "Czy na pewno chcesz odrzucić wszystkie zmiany? ", QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
         refreshTable();
     }
+
 }
