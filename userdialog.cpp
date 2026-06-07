@@ -38,6 +38,7 @@ addUserDialog::addUserDialog(QWidget* parent) :
 {
     ui->setupUi(this);
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    setFixedSize(this->size());
 }
 
 addUserDialog::~addUserDialog()

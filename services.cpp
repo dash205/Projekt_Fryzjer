@@ -34,11 +34,6 @@ void Services::createTable()
     ui->ServicesTable->setFocusPolicy(Qt::NoFocus);
     ui->ServicesTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    ui->ServicesTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-
-    int tableWidth = ui->ServicesTable->width();
-    ui->ServicesTable->setColumnWidth(1, tableWidth / 2);
-
     ui->ServicesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->ServicesTable->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->ServicesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -52,7 +47,8 @@ void Services::createTable()
 
 void Services::onAddClicked()
 {
-    AddServiceDialog dialog(this);
+
+    AddServiceDialog dialog(AddServiceDialog::dialogMode::add, this);
 
     if (dialog.exec() == QDialog::Accepted)
     {
@@ -75,7 +71,7 @@ void Services::onEditClicked()
         return;
     }
 
-    AddServiceDialog dialog(this);
+    AddServiceDialog dialog(AddServiceDialog::dialogMode::edit,this);
 
     dialog.setName(model->data(model->index(index.row(), 1), Qt::DisplayRole).toString());
     dialog.setPrice(model->data(model->index(index.row(), 2), Qt::EditRole).toDouble());

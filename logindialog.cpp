@@ -7,6 +7,7 @@
 #include "logindialog.h"
 
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "ui_logindialog.h"
 
@@ -23,6 +24,8 @@ void LoginDialog::on_buttonBox_clicked()
     if (!DatabaseConnection::instance().sign_correctness(GetLogin(), GetPassword()))
     {
         QMessageBox::warning(this, tr("Uwaga"), tr("Błędny login lub hasło!"));
+        ui->login_line->setText("");
+        ui->password_line->setText("");
         return;
     }
     QDialog::accept();
@@ -31,6 +34,8 @@ LoginDialog::LoginDialog(QWidget* parent) :
     QDialog(parent), ui(new Ui::LoginDialog)
 {
     ui->setupUi(this);
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setText("Zaloguj się");
+    setFixedSize(this->size());
 }
 
 LoginDialog::~LoginDialog()

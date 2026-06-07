@@ -49,6 +49,7 @@ set(PROJECT_SOURCES
         addclientdialog.cpp
         addclientdialog.h
         addclientdialog.ui
+        resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
