@@ -37,7 +37,7 @@ void Services::createTable()
     ui->ServicesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->ServicesTable->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->ServicesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    /*ui->ServicesTable->setAlternatingRowColors(true);*/
+
     ui->ServicesTable->verticalHeader()->setDefaultSectionSize(40);
     ui->ServicesTable->setShowGrid(false);
 

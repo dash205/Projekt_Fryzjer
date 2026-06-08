@@ -6,6 +6,8 @@
 #include "services.h"
 #include "users.h"
 #include "appointments.h"
+#include <QTableView>
+#include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,7 +22,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
-
+    void createModel();
 private slots:
     void on_actionClients_triggered();
     void on_actionMain_triggered();
@@ -28,7 +30,12 @@ private slots:
     void on_actionAppointments_triggered();
     void on_actionUsers_triggered();
 
+
+
+
 private:
     Ui::MainWindow *ui;
+
+    QSqlQueryModel* usersAppointmentsModel;
 };
 #endif // MAINWINDOW_H

@@ -25,7 +25,8 @@ public:
     ~Appointments() override;
 
     void refreshTable();
-
+    signals:
+            void appointmentChanged();
 private slots:
     void onDeleteAppointmentClicked();
     void onCellChanged(int row, int column);

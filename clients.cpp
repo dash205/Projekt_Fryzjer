@@ -29,6 +29,7 @@ Clients::Clients(QWidget *parent) : QWidget(parent), ui(new Ui::Clients) {
     ui->tableView->setSortingEnabled(true);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+
     ui->btnSave->setEnabled(false);
     ui->btnRevert->setEnabled(false);
 }
