@@ -127,6 +127,7 @@ void Appointments::onDeleteAppointmentClicked() {
     if (!item) return;
 
     int appointmentId = item->data(Qt::UserRole).toInt();
+    Appointment selectedApp = DatabaseConnection::instance().getAppointmentById(appointmentId);
     auto reply = QMessageBox::question(this, "Potwierdzenie usunięcia",
                                        "Czy na pewno chcesz bezpowrotnie usunąć tę wizytę?",
                                        QMessageBox::Yes | QMessageBox::No);
@@ -135,9 +136,17 @@ void Appointments::onDeleteAppointmentClicked() {
         return;
     }
 
-    if (DatabaseConnection::instance().deleteAppointment(appointmentId)) {
+    DatabaseConnection::instance().beginTransaction();
+
+    bool archiveOk = DatabaseConnection::instance().addArchivalAppointment(selectedApp);
+    bool deleteOk = DatabaseConnection::instance().deleteAppointment(appointmentId);
+
+    if (archiveOk && deleteOk) {
+        DatabaseConnection::instance().commitTransaction();
+        QMessageBox::information(this, "Sukces", "Wizyta usunięta i zarchiwizowana.");
         refreshTable();
     } else {
+        DatabaseConnection::instance().rollbackTransaction();
         QMessageBox::critical(this, "Błąd", "Nie udało się usunąć wizyty z bazy danych.");
     }
 }
