@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->label->setText("Witaj "+DatabaseConnection::instance().getUsername(DatabaseConnection::instance().currentUserId)+"!");
+    ui->welcomeHeader->setText("Witaj "+DatabaseConnection::instance().getUsername(DatabaseConnection::instance().currentUserId)+"!");
 
     Clients *clientsPage = new Clients(this);
     int clientsIndex = ui->stackedWidget->addWidget(clientsPage);
@@ -22,13 +22,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     if (DatabaseConnection::instance().autorisationCheck(DatabaseConnection::instance().currentUserId))
     {
-        ui->label_auth->setText("Jesteś zalogowany jako administrator.");
+        ui->subHeaderText->setText("Jesteś zalogowany jako administrator.");
         ui->actionUsers->setVisible(true);
         users *usersPage = new users(this);
         int usersIndex = ui->stackedWidget->addWidget(usersPage);
         connect(ui->actionUsers, &QAction::triggered, this, &MainWindow::on_actionUsers_triggered);
     }
-    /*QPixmap pixmap(":/resources/norzyczki.png");
+    QPixmap pixmap(":/resources/nozyczki.png");
     if (pixmap.isNull())
     {
         qDebug()<<"pixmap error";
@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         ui->icon->setPixmap(pixmap);
         ui->icon->setScaledContents(true);
-    }*/
+    }
 }
 
 MainWindow::~MainWindow()
