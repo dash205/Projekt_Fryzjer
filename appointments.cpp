@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QComboBox>
 #include <algorithm>
+#include <QTextEdit>
 
 #include "addappointmentdialog.h"
 
@@ -17,7 +18,14 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     ui->tableWidget->setColumnCount(5);
     ui->tableWidget->setHorizontalHeaderLabels({"Klient", "Usługa", "Data i Godzina", "Cena", "Notatki"});
 
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->setDefaultSectionSize(40);
+
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
@@ -95,20 +103,27 @@ void Appointments::refreshTable() {
         for (const auto &s : allServices) {
             rowComboService->addItem(s.name, s.id);
         }
-
         int currentIndex = rowComboService->findData(app.service_id);
         rowComboService->setCurrentIndex(currentIndex);
+
+        QTextEdit *notesEdit = new QTextEdit(ui->tableWidget);
+        notesEdit->setPlainText(app.notes);
+        notesEdit->setStyleSheet("border: none; background: transparent;");
 
         ui->tableWidget->setItem(row, 0, itemClient);
         ui->tableWidget->setCellWidget(row, 1, rowComboService);
         ui->tableWidget->setItem(row, 2, itemDate);
         ui->tableWidget->setItem(row, 3, itemPrice);
-        ui->tableWidget->setItem(row, 4, itemNotes);
-
+        // ui->tableWidget->setItem(row, 4, itemNotes);
+        ui->tableWidget->setCellWidget(row, 4, notesEdit);
         int appointmentId = app.id;
 
         connect(rowComboService, &QComboBox::activated, this, [this,appointmentId]() {
            modifiedAppointmentIds.insert(appointmentId);
+        });
+
+        connect(notesEdit, &QTextEdit::textChanged, this, [this,appointmentId]() {
+            modifiedAppointmentIds.insert(appointmentId);
         });
 
     }
@@ -204,7 +219,9 @@ void Appointments::onSaveAllClicked() {
             int currentServiceId = combo ? combo->currentData().toInt() : 0;
 
             QString dateStr = ui->tableWidget->item(row, 2)->text();
-            QString notesStr = ui->tableWidget->item(row, 4)->text();
+            // QString notesStr = ui->tableWidget->item(row, 4)->text();
+            QTextEdit *notesEdit = qobject_cast<QTextEdit*>(ui->tableWidget->cellWidget(row, 4));
+            QString notesStr = notesEdit->toPlainText();
 
             Appointment updatedApp;
             updatedApp.id = appointmentId;
