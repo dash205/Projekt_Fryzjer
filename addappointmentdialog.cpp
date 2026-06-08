@@ -11,6 +11,7 @@
 
 #include <QMessageBox>
 #include <QCompleter>
+#include <QDebug>
 
 
 addappointmentdialog::addappointmentdialog(QWidget *parent) : QDialog(parent), ui(new Ui::addappointmentdialog) {
@@ -59,6 +60,7 @@ void addappointmentdialog::onSaveClicked() {
     newApp.service_id = ui->comboService->currentData().toInt();
     newApp.appointment_date = ui->dateTimeEdit->dateTime();
     newApp.notes = ui->inputNotes->text();
+    newApp.user_id = DatabaseConnection::instance().currentUserId;
 
     if (DatabaseConnection::instance().addAppointment(newApp)) {
         this->accept();

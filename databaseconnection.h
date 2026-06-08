@@ -19,17 +19,21 @@ public:
     int currentUserId{};
 
     bool openConnection();
+    bool beginTransaction();
+    bool commitTransaction();
+    bool rollbackTransaction();
     //Klienci
     QList<Client> getAllClients();
     //Usługi
     QList<Service> getAllServices();
     bool CanServicesBeDeleted(const ServiceData& service);
     //Wizyty
+    Appointment getAppointmentById(int id);
     bool addAppointment(const Appointment& appointment);
     QList<Appointment> getAllAppointments();
     bool updateAppointment(const Appointment& appointment);
     bool deleteAppointment(int id);
-
+    bool addArchivalAppointment(const Appointment& appointment);
     bool sign_correctness(const QString& username, const QString& password);
     bool LoginExist(const QString& username);
     bool verifyPassword(const QString& password, const QString& hashedPassword);

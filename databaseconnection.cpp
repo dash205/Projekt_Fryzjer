@@ -22,6 +22,18 @@ bool DatabaseConnection::openConnection() {
     return true;
 }
 
+bool DatabaseConnection::beginTransaction() {
+    return m_db.transaction();
+}
+
+bool DatabaseConnection::commitTransaction() {
+    return m_db.commit();
+}
+
+bool DatabaseConnection::rollbackTransaction() {
+    return m_db.rollback();
+}
+
 bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
 {
     QSqlQuery query(m_db);
@@ -32,6 +44,33 @@ bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
     if (!query.exec()) {qDebug()<<query.lastError().text(); return false;}
 
     return query.next();
+}
+
+Appointment DatabaseConnection::getAppointmentById(int id) {
+    Appointment app;
+    app.id = -1;
+
+    QSqlQuery query;
+    query.prepare("SELECT id, client_id, service_id, appointment_date, notes, user_id "
+                  "FROM appointments WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        qDebug()<<"Błąd poczas pobierania wizyty o id "<<id<<":"<<query.lastError().text();
+        return app;
+    }
+
+    if (query.next()) {
+        app.id = query.value(0).toInt();
+        app.client_id = query.value(1).toInt();
+        app.service_id = query.value(2).toInt();
+        app.appointment_date = query.value(3).toDateTime();
+        app.notes = query.value(4).toString();
+        app.user_id = query.value(5).toInt();
+
+    }
+
+    return app;
 }
 
 QList<Client> DatabaseConnection::getAllClients() {
@@ -74,13 +113,14 @@ QList<Service> DatabaseConnection::getAllServices() {
 bool DatabaseConnection::addAppointment(const Appointment &appointment) {
     QSqlQuery query;
     query.prepare(
-        "INSERT INTO appointments (client_id, service_id, appointment_date, notes) "
-        "VALUES (:client_id, :service_id, :date, :notes)");
+        "INSERT INTO appointments (client_id, service_id, appointment_date, notes, user_id) "
+        "VALUES (:client_id, :service_id, :date, :notes, :user_id)");
 
     query.bindValue(":client_id", appointment.client_id);
     query.bindValue(":service_id", appointment.service_id);
     query.bindValue(":date", appointment.appointment_date);
     query.bindValue(":notes", appointment.notes);
+    query.bindValue(":user_id", appointment.user_id);
 
     if (!query.exec()) {
         qDebug()<<"Blad dodawania wizyty"<<query.lastError().text();
@@ -169,6 +209,54 @@ bool DatabaseConnection::deleteAppointment(int id) {
         return false;
     }
     return true;
+}
+
+bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) {
+    QSqlQuery clientQuery;
+    QString clientName = "klient";
+    clientQuery.prepare("SELECT first_name, last_name FROM clients WHERE id = :id");
+    clientQuery.bindValue(":id", appointment.client_id);
+
+    if (clientQuery.exec() && clientQuery.next()) {
+        clientName = clientQuery.value(0).toString() + " " + clientQuery.value(1).toString();
+    }
+
+    QSqlQuery serviceQuery;
+    QString serviceName = "usluga";
+    serviceQuery.prepare("SELECT name FROM services WHERE id = :id");
+    serviceQuery.bindValue(":id", appointment.service_id);
+
+    if (serviceQuery.exec() && serviceQuery.next()) {
+        serviceName = serviceQuery.value(0).toString();
+    }
+
+    QSqlQuery userQuery;
+    QString userName = "user";
+    userQuery.prepare("SELECT user_name FROM users WHERE user_id = :user_id");
+    userQuery.bindValue(":user_id", appointment.user_id);
+
+    if (userQuery.exec() && userQuery.next()) {
+        userName = userQuery.value(0).toString();
+    }
+
+    QSqlQuery insertQuery;
+    insertQuery.prepare(
+        "INSERT INTO archived_appointments (client_name, service_name, appointment_date, notes, user_name) "
+        "VALUES (:client_name, :service_name, :appointment_date, :notes, :user_name)");
+
+    insertQuery.bindValue(":client_name", clientName);
+    insertQuery.bindValue(":service_name", serviceName);
+    insertQuery.bindValue(":appointment_date", appointment.appointment_date);
+    insertQuery.bindValue(":notes", appointment.notes);
+    insertQuery.bindValue(":user_name", userName);
+
+    if (!insertQuery.exec()) {
+        qDebug()<<insertQuery.lastError().text();
+        return false;
+    }
+
+    return true;
+
 }
 
 bool DatabaseConnection::sign_correctness(const QString& login, const QString& password)
