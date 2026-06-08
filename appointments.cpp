@@ -21,6 +21,7 @@ Appointments::Appointments(QWidget *parent) : QWidget(parent), ui(new Ui::Appoin
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
+
     connect(ui->btnDialogAdd, &QPushButton::clicked, this, &Appointments::onAddAppointmentDialogClicked);
     connect(ui->btnDelete, &QPushButton::clicked, this, &Appointments::onDeleteAppointmentClicked);
     connect(ui->tableWidget, &QTableWidget::cellChanged, this, &Appointments::onCellChanged);
@@ -137,6 +138,7 @@ void Appointments::onDeleteAppointmentClicked() {
 
     if (DatabaseConnection::instance().deleteAppointment(appointmentId)) {
         refreshTable();
+        appointmentChanged();
     } else {
         QMessageBox::critical(this, "Błąd", "Nie udało się usunąć wizyty z bazy danych.");
     }
@@ -159,6 +161,7 @@ void Appointments::onAddAppointmentDialogClicked() {
 
     if (dialog.exec() == QDialog::Accepted) {
         refreshTable();
+        appointmentChanged();
     }
 }
 
@@ -181,6 +184,7 @@ void Appointments::onSaveAllClicked() {
                 return;
             }
         }
+        appointmentChanged();
     }
 
     bool isOk = true;
@@ -219,6 +223,7 @@ void Appointments::onSaveAllClicked() {
     }
 
     refreshTable();
+    appointmentChanged();
 
 }
 
@@ -230,6 +235,7 @@ void Appointments::onCancelChangesClicked() {
 
     if (reply == QMessageBox::Yes) {
         refreshTable();
+        appointmentChanged();
     }
 
 }

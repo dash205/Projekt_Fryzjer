@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
+    <width>500</width>
     <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>372</width>
+    <width>500</width>
     <height>300</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>372</width>
+    <width>500</width>
     <height>300</height>
    </size>
   </property>
@@ -28,7 +28,7 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>280</x>
      <y>240</y>
      <width>174</width>
      <height>34</height>
@@ -41,9 +41,9 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>30</x>
      <y>80</y>
-     <width>331</width>
+     <width>431</width>
      <height>91</height>
     </rect>
    </property>
@@ -67,6 +67,12 @@
     </item>
     <item row="2" column="0">
      <widget class="QLineEdit" name="ServiceName">
+      <property name="maximumSize">
+       <size>
+        <width>16777212</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="placeholderText">
        <string>Wpisz nazwę usługi</string>
       </property>

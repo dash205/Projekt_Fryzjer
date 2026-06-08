@@ -56,7 +56,7 @@ void users::createTable()
     ui->UsersTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->UsersTable->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->UsersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->UsersTable->setAlternatingRowColors(true);
+
     ui->UsersTable->verticalHeader()->setDefaultSectionSize(40);
     ui->UsersTable->setShowGrid(false);
 }
