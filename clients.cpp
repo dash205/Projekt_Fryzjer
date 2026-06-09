@@ -1,11 +1,11 @@
 #include "clients.h"
 #include "ui_clients.h"
 #include <QMessageBox>
-#include <QSqlError>
 #include <QSqlTableModel>
 
 #include "addclientdialog.h"
 #include "addservicedialog.h"
+#include "databaseconnection.h"
 
 Clients::Clients(QWidget *parent) : QWidget(parent), ui(new Ui::Clients) {
     ui->setupUi(this);
@@ -29,7 +29,7 @@ Clients::Clients(QWidget *parent) : QWidget(parent), ui(new Ui::Clients) {
     ui->tableView->setSortingEnabled(true);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-
+    //ustawiamy zeby przyciski zapisu i anulowania zmian byly domyslnie wylaczone
     ui->btnSave->setEnabled(false);
     ui->btnRevert->setEnabled(false);
 }
@@ -37,28 +37,29 @@ Clients::Clients(QWidget *parent) : QWidget(parent), ui(new Ui::Clients) {
 Clients::~Clients() {
     delete ui;
 }
-
+// obsluga przycisku dodawania klientow
 void Clients::on_btnAdd_clicked() {
     AddClientDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted) {
         int row = clientModel->rowCount();
         clientModel->insertRow(row);
-
+        //pobieranie danych z okna dialogowego
         clientModel->setData(clientModel->index(row, 1), dialog.getFirstName());
         clientModel->setData(clientModel->index(row, 2), dialog.getLastName());
         clientModel->setData(clientModel->index(row, 3), dialog.getPhone());
         clientModel->setData(clientModel->index(row, 4), dialog.getEmail());
 
-        // clientModel->submitAll();
-        ui->btnSave->setEnabled(true);
-        ui->btnRevert->setEnabled(true);
+        clientModel->submitAll();
+        // ui->btnSave->setEnabled(true);
+        // ui->btnRevert->setEnabled(true);
     }
 }
-
+//oblsluga przycisku usuwania klienta
 void Clients::on_btnDelete_clicked() {
     int selectedRow = ui->tableView->currentIndex().row();
     if (selectedRow >= 0) {
+        int clientId = clientModel->data(clientModel->index(selectedRow, 0)).toInt();
 
         QString imie = clientModel->data(clientModel->index(selectedRow, 1)).toString();
         QString nazwisko = clientModel->data(clientModel->index(selectedRow, 2)).toString();
@@ -67,17 +68,24 @@ void Clients::on_btnDelete_clicked() {
 
 
         if (confirmation("Potwierdzenie usunięcia", alert)) {
-            clientModel->removeRow(selectedRow);
+            //przekazujemy id klienta do funkcji odpowiedzialnej za archiwizacje jego wizyt
+            if (DatabaseConnection::instance().archiveAllClientApointments(clientId)) {
+                clientModel->removeRow(selectedRow);
 
-            ui->btnSave->setEnabled(true);
-            ui->btnRevert->setEnabled(true);
+                if (clientModel->submitAll()) {
+                    QMessageBox::information(this, "Sukces", "Klient został usunięty z bazy danych, a jego wizyty zarchiwizowane.");
+                }
+                else {
+                    QMessageBox::critical(this, "Błąd", "Wystąpił problem podczas archiwizacji wizyt klienta.");
+                }
+            }
         }
     }
     else {
         QMessageBox::warning(this, "Błąd", "Wybierz klienta do usunięcia!");
     }
 }
-
+//obsluga przycisku zapisu zmian
 void Clients::on_btnSave_clicked() {
     QString changes = QString("Czy na pewno chcesz zapisać wszystkie zmiany?");
 
@@ -92,7 +100,7 @@ void Clients::on_btnSave_clicked() {
         }
     }
 }
-
+//obsluga przycisku anulowania zmian
 void Clients::on_btnRevert_clicked() {
     QString cancel = QString("Czy na pewno chcesz cofnąć zmiany?");
 
@@ -104,7 +112,7 @@ void Clients::on_btnRevert_clicked() {
     }
 }
 
-// metoda zeby nie musiec powtarzac tego samego w kadzym miejscu
+//customowe okienko potwierdzenia
 bool Clients::confirmation(const QString &title, const QString &message) {
     QMessageBox msgBox(this);
     msgBox.setWindowTitle(title);
@@ -128,19 +136,20 @@ void Clients::on_lineEditSearch_textChanged(const QString &text) const {
     }
     clientModel->select();
 }
-
+//edycja danych w tabeli
 void Clients::on_tableView_doubleClicked(const QModelIndex &index) {
     int selectedRow = ui->tableView->currentIndex().row();
-
+    //pobieramy obecne dane klienta
     QString currentFirstName = clientModel->data(clientModel->index(selectedRow, 1)).toString();
     QString currentLastName = clientModel->data(clientModel->index(selectedRow, 2)).toString();
     QString currentPhone = clientModel->data(clientModel->index(selectedRow, 3)).toString();
     QString currentEmail = clientModel->data(clientModel->index(selectedRow, 4)).toString();
 
     AddClientDialog dialog(this);
-
+    //wstawiamy w oknie dialogowym obecne dane klienta
     dialog.setClientData(currentFirstName, currentLastName, currentEmail, currentPhone);
 
+    //zmieniamy dane klienta w tabeli na nowe
     if (dialog.exec() == QDialog::Accepted) {
         clientModel->setData(clientModel->index(selectedRow, 1), dialog.getFirstName());
         clientModel->setData(clientModel->index(selectedRow, 2), dialog.getLastName());

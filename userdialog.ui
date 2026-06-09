@@ -69,6 +69,11 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>login_line</tabstop>
+  <tabstop>password_line</tabstop>
+  <tabstop>name_line</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -3,6 +3,7 @@
 #include "databaseconnection.h"
 #include "addappointmentdialog.h"
 #include  <QPixmap>
+#include "appointments.h"
 
 void MainWindow::createModel() //Tworzenie modelu i wyświetlanie tabeli w oknie menu głównego
 {
@@ -61,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     Services *servicesPage = new Services(this);
     int servicesIndex = ui->stackedWidget->addWidget(servicesPage);
 
-    Appointments *appointmentsPage = new Appointments(this);
+    appointmentsPage = new Appointments(this);
     int apponmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
 
     //modyfikujemy tabelę w menu głównym gdy wprowadzamy zmiany w tabeli wizyt
@@ -99,6 +100,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionMain_triggered() {
     ui->stackedWidget->setCurrentIndex(0);
+    createModel();
 }
 
 void MainWindow::on_actionClients_triggered() {
@@ -111,6 +113,7 @@ void MainWindow::on_actionServices_triggered() {
 
 void MainWindow::on_actionAppointments_triggered() {
     ui->stackedWidget->setCurrentIndex(3);
+    appointmentsPage->refreshTable();
 }
 void MainWindow::on_actionUsers_triggered()
 {

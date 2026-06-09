@@ -34,6 +34,34 @@ bool DatabaseConnection::CanServicesBeDeleted(const Service& service) //sprawdza
     return query.next();
 }
 
+//Funkcja otrzymująca id a zwracająca obiekt wizyty
+Appointment DatabaseConnection::getAppointmentById(int id) {
+    Appointment app;
+    app.id = -1;
+
+    QSqlQuery query;
+    query.prepare("SELECT id, client_id, service_id, appointment_date, notes, user_id "
+                  "FROM appointments WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        qDebug()<<"Błąd poczas pobierania wizyty o id "<<id<<":"<<query.lastError().text();
+        return app;
+    }
+
+    if (query.next()) {
+        app.id = query.value(0).toInt();
+        app.client_id = query.value(1).toInt();
+        app.service_id = query.value(2).toInt();
+        app.appointment_date = query.value(3).toDateTime();
+        app.notes = query.value(4).toString();
+        app.user_id = query.value(5).toInt();
+
+    }
+
+    return app;
+}
+
 QList<Client> DatabaseConnection::getAllClients() {
     QList<Client> list;
     QSqlQuery query("SELECT id, first_name, last_name FROM clients");
@@ -74,13 +102,14 @@ QList<Service> DatabaseConnection::getAllServices() {
 bool DatabaseConnection::addAppointment(const Appointment &appointment) {
     QSqlQuery query;
     query.prepare(
-        "INSERT INTO appointments (client_id, service_id, appointment_date, notes) "
-        "VALUES (:client_id, :service_id, :date, :notes)");
+        "INSERT INTO appointments (client_id, service_id, appointment_date, notes, user_id) "
+        "VALUES (:client_id, :service_id, :date, :notes, :user_id)");
 
     query.bindValue(":client_id", appointment.client_id);
     query.bindValue(":service_id", appointment.service_id);
     query.bindValue(":date", appointment.appointment_date);
     query.bindValue(":notes", appointment.notes);
+    query.bindValue(":user_id", appointment.user_id);
 
     if (!query.exec()) {
         qDebug()<<"Blad dodawania wizyty"<<query.lastError().text();
@@ -268,4 +297,51 @@ QString DatabaseConnection::getCurrentAdminPassword(const int& id) //zwracamy ha
     if (!query.next()) return "";
 
     return query.value("password").toString();
+}
+//archiwizacja wszystkich wizyt usuwanego klienta
+bool DatabaseConnection::archiveAllClientApointments(int clientId) {
+    if (!beginTransaction()) {
+        qDebug() << "Nie można rozpocząć transakcji archiwizacji.";
+        return false;
+    }
+
+    //pobieramy wszystkie wizyty danego klienta
+    QSqlQuery query;
+    query.prepare("SELECT id, client_id, service_id, appointment_date, notes, user_id FROM appointments WHERE client_id = :client_id");
+    query.bindValue(":client_id", clientId);
+
+    if (!query.exec()) {
+        qDebug() << "Błąd pobierania wizyt do archiwizacji" << query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    //kazda wizyte wstawiamy do obiektu po to zeby przekazac ten obiekt dalej
+    while (query.next()) {
+        Appointment app;
+        app.id = query.value("id").toInt();
+        app.client_id = query.value("client_id").toInt();
+        app.service_id = query.value("service_id").toInt();
+        app.appointment_date = query.value("appointment_date").toDateTime();
+        app.notes = query.value("notes").toString();
+        app.user_id = query.value("user_id").toInt();
+
+        //przekazujemy obiekt i archiwizujemy wizyty
+        if (!addArchivalAppointment(app)) {
+            qDebug() << "Błąd podczas archiwizacji pojedynczej wizyty";
+            rollbackTransaction();
+            return false;
+        }
+    }
+    // usuwamy wizyty klienta
+    QSqlQuery deleteQuery;
+
+    deleteQuery.prepare("DELETE FROM appointments WHERE client_id = :client_id");
+    deleteQuery.bindValue(":client_id", clientId);
+
+    if (!deleteQuery.exec()) {
+        qDebug() << "Błąd usuwania starych wizyt: " << deleteQuery.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    return commitTransaction();
 }
