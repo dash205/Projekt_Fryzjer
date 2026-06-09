@@ -3,7 +3,7 @@
 
 #include <QString>
 
-class Service { //klasa pomocnicza dla danych z tabeli usług
+class Service {
 public:
     int id=0;
     QString name;
