@@ -102,6 +102,11 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>ServiceName</tabstop>
+  <tabstop>ServicePrice</tabstop>
+  <tabstop>ServiceDuration</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

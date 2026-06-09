@@ -357,3 +357,50 @@ QString DatabaseConnection::getCurrentAdminPassword(const int& id)
 
     return query.value("password").toString();
 }
+
+bool DatabaseConnection::archiveAllClientApointments(int clientId) {
+    if (!beginTransaction()) {
+        qDebug() << "Nie można rozpocząć transakcji archiwizacji.";
+        return false;
+    }
+
+    //pobieramy wszystkie wizyty danego klienta
+    QSqlQuery query;
+    query.prepare("SELECT id, client_id, service_id, appointment_date, notes, user_id FROM appointments WHERE client_id = :client_id");
+    query.bindValue(":client_id", clientId);
+
+    if (!query.exec()) {
+        qDebug() << "Błąd pobierania wizyt do archiwizacji" << query.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+
+    while (query.next()) {
+        Appointment app;
+        app.id = query.value("id").toInt();
+        app.client_id = query.value("client_id").toInt();
+        app.service_id = query.value("service_id").toInt();
+        app.appointment_date = query.value("appointment_date").toDateTime();
+        app.notes = query.value("notes").toString();
+        app.user_id = query.value("user_id").toInt();
+
+        //archiwizujemy wizyty klienta
+        if (!addArchivalAppointment(app)) {
+            qDebug() << "Błąd podczas archiwizacji pojedynczej wizyty";
+            rollbackTransaction();
+            return false;
+        }
+    }
+    // usuwamy wizyty klienta
+    QSqlQuery deleteQuery;
+
+    deleteQuery.prepare("DELETE FROM appointments WHERE client_id = :client_id");
+    deleteQuery.bindValue(":client_id", clientId);
+
+    if (!deleteQuery.exec()) {
+        qDebug() << "Błąd usuwania starych wizyt: " << deleteQuery.lastError().text();
+        rollbackTransaction();
+        return false;
+    }
+    return commitTransaction();
+}

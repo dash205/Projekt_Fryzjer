@@ -18,7 +18,7 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
-       <pointsize>23</pointsize>
+       <pointsize>24</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -40,20 +40,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="editUser">
-       <property name="text">
-        <string>Resetuj hasło</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteUser">
-       <property name="text">
-        <string>Usuń Użytkownika</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="addUser">
        <property name="mouseTracking">
         <bool>false</bool>
@@ -72,6 +58,20 @@
        </property>
        <property name="flat">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteUser">
+       <property name="text">
+        <string>Usuń Użytkownika</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="editUser">
+       <property name="text">
+        <string>Resetuj hasło</string>
        </property>
       </widget>
      </item>
