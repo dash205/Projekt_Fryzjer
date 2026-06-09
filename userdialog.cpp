@@ -7,19 +7,19 @@
 #include "ui_userdialog.h"
 #include <QMessageBox>
 
-QString addUserDialog::getLogin() const
+QString addUserDialog::getLogin() const //pobierz wpisany login dla nowo tworzonego użytkownika
 {
     return ui->login_line->text();
 }
-QString addUserDialog::getPassword() const
+QString addUserDialog::getPassword() const //pobierz wpisane hasło
 {
     return ui->password_line->text();
 }
-QString addUserDialog::getName() const
+QString addUserDialog::getName() const //pobierz imie użytkownika
 {
     return ui->name_line->text();
 }
-void addUserDialog::on_buttonBox_accepted()
+void addUserDialog::on_buttonBox_accepted() //logika dla przycisku zatwierdzenia w oknie dodawania użytkownika
 {
     if (ui->login_line->text().isEmpty() || ui->password_line->text().isEmpty() || ui->name_line->text().isEmpty())
     {

@@ -4,7 +4,7 @@
 #include "addappointmentdialog.h"
 #include  <QPixmap>
 
-void MainWindow::createModel()
+void MainWindow::createModel() //Tworzenie modelu i wyświetlanie tabeli w oknie menu głównego
 {
     int userId = DatabaseConnection::instance().currentUserId;
 
@@ -14,15 +14,15 @@ void MainWindow::createModel()
         "SELECT "
                 "c.first_name || ' ' || c.last_name AS client_name, "
                 "s.name, "
-                "s.price, "
+                "s.price || '0 zł' AS price, "
                 "strftime('%d.%m.%Y %H:%M', a.appointment_date) AS appointment_date, "
                 "a.notes, "
                 "c.phone "
                 "FROM appointments a "
                 "INNER JOIN clients c ON a.client_id = c.id "
                 "INNER JOIN services s ON a.service_id = s.id "
-                "WHERE a.client_id = %1 "
-                "ORDER BY a.appointment_date DESC"
+                "WHERE a.user_id = %1 "
+                "ORDER BY a.appointment_date asc"
     ).arg(userId));
 
     if (model->lastError().isValid()) {
@@ -31,7 +31,7 @@ void MainWindow::createModel()
 
     model->setHeaderData(0, Qt::Horizontal, "Imię i Nazwisko");
     model->setHeaderData(1, Qt::Horizontal, "Usługa");
-    model->setHeaderData(2, Qt::Horizontal, "Cena");
+    model->setHeaderData(2, Qt::Horizontal, "Cena (zł)");
     model->setHeaderData(3, Qt::Horizontal, "Data");
     model->setHeaderData(4, Qt::Horizontal, "Uwagi");
     model->setHeaderData(5, Qt::Horizontal, "Telefon");
@@ -50,7 +50,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->welcomeHeader->setText("Witaj "+DatabaseConnection::instance().getUsername(DatabaseConnection::instance().currentUserId)+"!");
+
+    //Logika dla nagłówka powitalnego
+    ui->welcomeHeader->setText("Witaj "+ DatabaseConnection::instance().getUsername(DatabaseConnection::instance().currentUserId)+"!");
     createModel();
 
     Clients *clientsPage = new Clients(this);
@@ -61,10 +63,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     Appointments *appointmentsPage = new Appointments(this);
     int apponmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
+
+    //modyfikujemy tabelę w menu głównym gdy wprowadzamy zmiany w tabeli wizyt
     connect(appointmentsPage, &Appointments::appointmentChanged,
                 this, &MainWindow::createModel);
+
     ui->actionUsers->setVisible(false);
 
+    //sprawdzanie dostępu do okna zarządzania użytkownikami (gdy id admninistratora - wyświetl możliwość przejścia do okna)
     if (DatabaseConnection::instance().autorisationCheck(DatabaseConnection::instance().currentUserId))
     {
         ui->subHeaderText->setText("Jesteś zalogowany jako administrator.");
@@ -73,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent)
         int usersIndex = ui->stackedWidget->addWidget(usersPage);
         connect(ui->actionUsers, &QAction::triggered, this, &MainWindow::on_actionUsers_triggered);
     }
+
+    //wyświetlanie obrazka w menu głównym
     QPixmap pixmap(":/resources/nozyczki.png");
     if (pixmap.isNull())
     {

@@ -11,7 +11,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 
-QByteArray generateSalt(int length = 16) {
+QByteArray generateSalt(int length = 16) {  //generuj sól dla późniejszego hashowania hasła
     QByteArray salt = QByteArray(length, '\0');
     for (int i = 0; i < length; i+=sizeof(quint32))
     {
@@ -20,7 +20,7 @@ QByteArray generateSalt(int length = 16) {
     }
     return salt;
 }
-QString HashPassword(const QString password)
+QString HashPassword(const QString password) //Hashowanie pobranego hasła
 {
     QByteArray salt = generateSalt();
 
@@ -32,7 +32,7 @@ QString HashPassword(const QString password)
             .arg(hash.toBase64());
 }
 
-void users::createModel()
+void users::createModel() //model tabeli w oknie użytkowników
 {
     model = new QSqlTableModel(this);
     model->setTable("users");
@@ -45,7 +45,7 @@ void users::createModel()
     qDebug() << model->lastError().text();
     qDebug() << model->rowCount();
 }
-void users::createTable()
+void users::createTable() //widok tabeli w oknie użytkowników
 {
     ui->UsersTable->setModel(model);
     ui->UsersTable->setColumnHidden(0, true);
@@ -61,7 +61,7 @@ void users::createTable()
     ui->UsersTable->setShowGrid(false);
 }
 
-void users::onAddClicked()
+void users::onAddClicked() //logika dla przycisku dodania użytkownika
 {
     addUserDialog dialog(this);
 
@@ -77,7 +77,7 @@ void users::onAddClicked()
     }
 }
 
-bool users::passwordCheck()
+bool users::passwordCheck() //funkcja wyświetlania okna dialogowego weryfikacji tożsamości administratora
 {
     bool ok = false;
     QString currentPassword = QInputDialog::getText(
@@ -102,7 +102,7 @@ bool users::passwordCheck()
     return true;
 }
 
-void users::onDeleteClicked()
+void users::onDeleteClicked() //logika dla przycisku usuwania użytkownika
 {
     QModelIndex index = ui->UsersTable->currentIndex();
     if (!index.isValid())
@@ -118,7 +118,7 @@ void users::onDeleteClicked()
     }
 }
 
-void users::onEditClicked()
+void users::onPasswordChangeClicked() //logika dla przycisku zmiany hasła użytkownika
 {
     QModelIndex index = ui->UsersTable->currentIndex();
     if (!index.isValid())
@@ -154,7 +154,7 @@ users::users(QWidget* parent) :
     ui->setupUi(this);
     connect(ui->addUser, &QPushButton::clicked, this, &users::onAddClicked);
     connect(ui->deleteUser, &QPushButton::clicked, this, &users::onDeleteClicked);
-    connect(ui->editUser, &QPushButton::clicked, this, &users::onEditClicked);
+    connect(ui->editUser, &QPushButton::clicked, this, &users::onPasswordChangeClicked);
 
     createModel();
     createTable();
