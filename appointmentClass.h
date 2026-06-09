@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDateTime>
 
+//Klasa pomocnicza służąca jako kontener na dane
 class Appointment {
 public:
     int id = 0;

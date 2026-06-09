@@ -8,6 +8,7 @@ DatabaseConnection& DatabaseConnection::instance() {
     return inst;
 }
 
+//Połączenie z bazą danych
 bool DatabaseConnection::openConnection() {
     m_db = QSqlDatabase::addDatabase("QSQLITE");
 
@@ -46,6 +47,7 @@ bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
     return query.next();
 }
 
+//Funkcja otrzymująca id a zwracająca obiekt wizyty
 Appointment DatabaseConnection::getAppointmentById(int id) {
     Appointment app;
     app.id = -1;
@@ -211,7 +213,9 @@ bool DatabaseConnection::deleteAppointment(int id) {
     return true;
 }
 
+//Archiwizacja wizyty
 bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) {
+    //Zamiana client_id w imię i nazwisko klienta
     QSqlQuery clientQuery;
     QString clientName = "klient";
     clientQuery.prepare("SELECT first_name, last_name FROM clients WHERE id = :id");
@@ -221,6 +225,7 @@ bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) 
         clientName = clientQuery.value(0).toString() + " " + clientQuery.value(1).toString();
     }
 
+    //Zamiana service_id w nazwę usługi
     QSqlQuery serviceQuery;
     QString serviceName = "usluga";
     serviceQuery.prepare("SELECT name FROM services WHERE id = :id");
@@ -230,6 +235,7 @@ bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) 
         serviceName = serviceQuery.value(0).toString();
     }
 
+    //Zamiana user_id w nazwę użytkownika, który dodał wizytę
     QSqlQuery userQuery;
     QString userName = "user";
     userQuery.prepare("SELECT user_name FROM users WHERE user_id = :user_id");
@@ -239,6 +245,7 @@ bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) 
         userName = userQuery.value(0).toString();
     }
 
+    //Połączenie w jednego inserta
     QSqlQuery insertQuery;
     insertQuery.prepare(
         "INSERT INTO archived_appointments (client_name, service_name, appointment_date, notes, user_name) "
