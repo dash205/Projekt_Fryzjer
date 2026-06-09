@@ -15,12 +15,12 @@ AddClientDialog::AddClientDialog(QWidget *parent) : QDialog(parent), ui(new Ui::
     ui->setupUi(this);
 
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("Anuluj");
-
+    //regex nr telefonu
     // ui->lineEditPhone->setInputMask("999999999");
     QRegularExpression rxPhone("^[0-9]{9}$");
     QValidator *phoneValidator = new QRegularExpressionValidator(rxPhone, this);
     ui->lineEditPhone->setValidator(phoneValidator);
-
+    //regex emailu
     QRegularExpression rxEmail("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}\\b");
     QValidator *emailValidator = new QRegularExpressionValidator(rxEmail, this);
     ui->lineEditEmail->setValidator(emailValidator);
@@ -58,6 +58,7 @@ QString AddClientDialog::getPhone() const
 
 void AddClientDialog::on_buttonBox_accepted()
 {
+    //sprawdzanie czy pola z danymi klienta nie sa puste
     if (ui->lineEditFirstName->text().isEmpty() || ui->lineEditLastName->text().isEmpty() || ui->lineEditEmail->text().isEmpty() || ui->lineEditPhone->text().isEmpty())
     {
         QMessageBox::warning(this, "Uwaga", "Uzupełnij wszystkie pola");
@@ -88,7 +89,7 @@ void AddClientDialog::on_buttonBox_accepted()
 
     QDialog::accept();
 }
-
+//ustawianie danych w oknie dialogowym, potrzebne do edycji
 void AddClientDialog::setClientData(const QString &firstName, const QString &lastName, const QString &email, const QString &phone) {
     ui->lineEditFirstName->setText(firstName);
     ui->lineEditLastName->setText(lastName);

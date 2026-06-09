@@ -364,7 +364,7 @@ QString DatabaseConnection::getCurrentAdminPassword(const int& id)
 
     return query.value("password").toString();
 }
-
+//archiwizacja wszystkich wizyt usuwanego klienta
 bool DatabaseConnection::archiveAllClientApointments(int clientId) {
     if (!beginTransaction()) {
         qDebug() << "Nie można rozpocząć transakcji archiwizacji.";
@@ -381,7 +381,7 @@ bool DatabaseConnection::archiveAllClientApointments(int clientId) {
         rollbackTransaction();
         return false;
     }
-
+    //kazda wizyte wstawiamy do obiektu po to zeby przekazac ten obiekt dalej
     while (query.next()) {
         Appointment app;
         app.id = query.value("id").toInt();
@@ -391,7 +391,7 @@ bool DatabaseConnection::archiveAllClientApointments(int clientId) {
         app.notes = query.value("notes").toString();
         app.user_id = query.value("user_id").toInt();
 
-        //archiwizujemy wizyty klienta
+        //przekazujemy obiekt i archiwizujemy wizyty
         if (!addArchivalAppointment(app)) {
             qDebug() << "Błąd podczas archiwizacji pojedynczej wizyty";
             rollbackTransaction();

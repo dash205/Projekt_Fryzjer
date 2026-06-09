@@ -37,14 +37,14 @@ Clients::Clients(QWidget *parent) : QWidget(parent), ui(new Ui::Clients) {
 Clients::~Clients() {
     delete ui;
 }
-
+// obsluga przycisku dodawania klientow
 void Clients::on_btnAdd_clicked() {
     AddClientDialog dialog(this);
 
     if (dialog.exec() == QDialog::Accepted) {
         int row = clientModel->rowCount();
         clientModel->insertRow(row);
-
+        //pobieranie danych z okna dialogowego
         clientModel->setData(clientModel->index(row, 1), dialog.getFirstName());
         clientModel->setData(clientModel->index(row, 2), dialog.getLastName());
         clientModel->setData(clientModel->index(row, 3), dialog.getPhone());
@@ -55,7 +55,7 @@ void Clients::on_btnAdd_clicked() {
         // ui->btnRevert->setEnabled(true);
     }
 }
-
+//oblsluga przycisku usuwania klienta
 void Clients::on_btnDelete_clicked() {
     int selectedRow = ui->tableView->currentIndex().row();
     if (selectedRow >= 0) {
@@ -85,7 +85,7 @@ void Clients::on_btnDelete_clicked() {
         QMessageBox::warning(this, "Błąd", "Wybierz klienta do usunięcia!");
     }
 }
-
+//obsluga przycisku zapisu zmian
 void Clients::on_btnSave_clicked() {
     QString changes = QString("Czy na pewno chcesz zapisać wszystkie zmiany?");
 
@@ -100,7 +100,7 @@ void Clients::on_btnSave_clicked() {
         }
     }
 }
-
+//obsluga przycisku anulowania zmian
 void Clients::on_btnRevert_clicked() {
     QString cancel = QString("Czy na pewno chcesz cofnąć zmiany?");
 
@@ -112,7 +112,7 @@ void Clients::on_btnRevert_clicked() {
     }
 }
 
-// metoda zeby nie musiec powtarzac tego samego w kadzym miejscu
+//customowe okienko potwierdzenia
 bool Clients::confirmation(const QString &title, const QString &message) {
     QMessageBox msgBox(this);
     msgBox.setWindowTitle(title);
