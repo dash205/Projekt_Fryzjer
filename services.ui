@@ -18,13 +18,13 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
-       <family>Noto Sans Gothic</family>
-       <pointsize>23</pointsize>
+       <family>Segoe UI</family>
+       <pointsize>24</pointsize>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Dostępne usługi fryzjerskie</string>
+      <string>Zarządzanie usługami</string>
      </property>
      <property name="textFormat">
       <enum>Qt::TextFormat::AutoText</enum>
@@ -35,7 +35,14 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableView" name="ServicesTable"/>
+    <widget class="QTableView" name="ServicesTable">
+     <property name="showGrid">
+      <bool>true</bool>
+     </property>
+     <attribute name="verticalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

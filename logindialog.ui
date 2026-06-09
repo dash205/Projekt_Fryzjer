@@ -109,6 +109,10 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>login_line</tabstop>
+  <tabstop>password_line</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

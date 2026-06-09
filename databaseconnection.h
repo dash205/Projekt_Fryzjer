@@ -41,6 +41,7 @@ public:
     bool autorisationCheck(const int& id);
     bool passwordChange(const QString& username, const QString& password);
     QString getUsername(const int& id);
+    bool archiveAllClientApointments(int clientId);
 private:
     DatabaseConnection() = default;
     QSqlDatabase m_db;
