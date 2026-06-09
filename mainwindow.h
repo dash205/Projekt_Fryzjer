@@ -37,5 +37,6 @@ private:
     Ui::MainWindow *ui;
 
     QSqlQueryModel* usersAppointmentsModel;
+    Appointments *appointmentsPage;
 };
 #endif // MAINWINDOW_H

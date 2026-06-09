@@ -3,6 +3,7 @@
 #include "databaseconnection.h"
 #include "addappointmentdialog.h"
 #include  <QPixmap>
+#include "appointments.h"
 
 void MainWindow::createModel()
 {
@@ -22,7 +23,7 @@ void MainWindow::createModel()
                 "INNER JOIN clients c ON a.client_id = c.id "
                 "INNER JOIN services s ON a.service_id = s.id "
                 "WHERE a.user_id = %1 "
-                "ORDER BY a.appointment_date DESC"
+                "ORDER BY a.appointment_date ASC"
     ).arg(userId));
 
     if (model->lastError().isValid()) {
@@ -59,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     Services *servicesPage = new Services(this);
     int servicesIndex = ui->stackedWidget->addWidget(servicesPage);
 
-    Appointments *appointmentsPage = new Appointments(this);
+    appointmentsPage = new Appointments(this);
     int apponmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
     connect(appointmentsPage, &Appointments::appointmentChanged,
                 this, &MainWindow::createModel);
@@ -91,6 +92,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionMain_triggered() {
     ui->stackedWidget->setCurrentIndex(0);
+    createModel();
 }
 
 void MainWindow::on_actionClients_triggered() {
@@ -103,6 +105,7 @@ void MainWindow::on_actionServices_triggered() {
 
 void MainWindow::on_actionAppointments_triggered() {
     ui->stackedWidget->setCurrentIndex(3);
+    appointmentsPage->refreshTable();
 }
 void MainWindow::on_actionUsers_triggered()
 {
