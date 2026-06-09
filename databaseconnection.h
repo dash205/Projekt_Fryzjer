@@ -8,8 +8,9 @@
 #include <QSqlTableModel>
 #include <QTableView>
 #include "appointmentClass.h"
-#include "serviceClass.h"
+#include "serviceData.h"
 #include "clientClass.h"
+#include "logindialogdata.h"
 #include "serviceClass.h"
 
 class DatabaseConnection {
@@ -25,7 +26,7 @@ public:
     QList<Client> getAllClients();
     //Usługi
     QList<Service> getAllServices();
-    bool CanServicesBeDeleted(const Service& service);
+    bool CanServicesBeDeleted(const ServiceData& service);
     //Wizyty
     Appointment getAppointmentById(int id);
     bool addAppointment(const Appointment& appointment);

@@ -26,7 +26,7 @@ public:
 
     void refreshTable();
     signals:
-            void appointmentChanged(); //sprawdzamy czy zachodzi zmiana w tabeli wizyt
+            void appointmentChanged();
 private slots:
     void onDeleteAppointmentClicked();
     void onCellChanged(int row, int column);

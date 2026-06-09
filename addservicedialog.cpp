@@ -9,38 +9,36 @@
 #include "ui_addservicedialog.h"
 #include <QMessageBox>
 
-//okno dla obsługi modyfikacji usługi oraz jej dodawania
-
-QString AddServiceDialog::getName() const //zwróć podane imie w oknie wprowadzania usługi
+QString AddServiceDialog::getName() const
 {
   return ui->ServiceName->text();
 }
-double AddServiceDialog::getPrice() const //zwróć cenę
+double AddServiceDialog::getPrice() const
 {
     return ui->ServicePrice->value();
 }
-int AddServiceDialog::getDuration() const //zwróć czas trwania
+int AddServiceDialog::getDuration() const
 {
     return ui->ServiceDuration->value();
 }
-void AddServiceDialog::setName(const QString& name) //ustaw imię (w przypadku modyfikacji usługi)
+void AddServiceDialog::setName(const QString& name)
 {
     ui->ServiceName->setText(name);
 }
-void AddServiceDialog::setPrice(double price) //ustaw cenę
+void AddServiceDialog::setPrice(double price)
 {
     ui->ServicePrice->setValue(price);
 }
-void AddServiceDialog::setDuration(int duration) //ustaw czas trwania
+void AddServiceDialog::setDuration(int duration)
 {
     ui->ServiceDuration->setValue(duration);
 }
 
-void AddServiceDialog::closeEvent(QCloseEvent* event) //nie można kliknąć w krzyżyk zamknięcia okna
+void AddServiceDialog::closeEvent(QCloseEvent* event)
 {
     event->ignore();
 }
-void AddServiceDialog::on_buttonBox_accepted() //logika przycisku akceptacji
+void AddServiceDialog::on_buttonBox_accepted()
 {
     if (ui->ServiceName->text().isEmpty() || ui->ServicePrice->value() == 0.00 || ui->ServiceDuration->value() == 0)
     {
@@ -55,8 +53,7 @@ AddServiceDialog::AddServiceDialog(dialogMode mode,QWidget* parent) :
         ui->setupUi(this);
         ui->ServicePrice->setMaximum(9999.99);
         connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-    switch (mode) //zmiana tytułu okna w zależności od przeznaczenia
+    switch (mode)
     {
     case dialogMode::add: setWindowTitle("Dodaj usługę"); break;
     case dialogMode::edit: setWindowTitle("Modyfikuj usługę"); break;
