@@ -3,13 +3,12 @@
 #include <QCryptographicHash>
 #include <QMessageBox>
 
-DatabaseConnection& DatabaseConnection::instance() {
+DatabaseConnection& DatabaseConnection::instance() { //instancja naszej bazy danych
     static DatabaseConnection inst;
     return inst;
 }
 
-//Połączenie z bazą danych
-bool DatabaseConnection::openConnection() {
+bool DatabaseConnection::openConnection() {  //łączenie z bazą danych
     m_db = QSqlDatabase::addDatabase("QSQLITE");
 
     QString dbPath = QCoreApplication::applicationDirPath() + "/salon_fryzjerski.db";
@@ -23,20 +22,8 @@ bool DatabaseConnection::openConnection() {
     return true;
 }
 
-bool DatabaseConnection::beginTransaction() {
-    return m_db.transaction();
-}
-
-bool DatabaseConnection::commitTransaction() {
-    return m_db.commit();
-}
-
-bool DatabaseConnection::rollbackTransaction() {
-    return m_db.rollback();
-}
-
-bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
-{
+bool DatabaseConnection::CanServicesBeDeleted(const Service& service) //sprawdzamy czy możemy usunąć usługę (czy nie jest
+{                                                                     //aktualnie przypisana do wizyty)
     QSqlQuery query(m_db);
     query.prepare("Select a.* from appointments a "
                   "join services s on s.id = a.service_id where s.id = (:id)");
@@ -213,61 +200,8 @@ bool DatabaseConnection::deleteAppointment(int id) {
     return true;
 }
 
-//Archiwizacja wizyty
-bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) {
-    //Zamiana client_id w imię i nazwisko klienta
-    QSqlQuery clientQuery;
-    QString clientName = "klient";
-    clientQuery.prepare("SELECT first_name, last_name FROM clients WHERE id = :id");
-    clientQuery.bindValue(":id", appointment.client_id);
-
-    if (clientQuery.exec() && clientQuery.next()) {
-        clientName = clientQuery.value(0).toString() + " " + clientQuery.value(1).toString();
-    }
-
-    //Zamiana service_id w nazwę usługi
-    QSqlQuery serviceQuery;
-    QString serviceName = "usluga";
-    serviceQuery.prepare("SELECT name FROM services WHERE id = :id");
-    serviceQuery.bindValue(":id", appointment.service_id);
-
-    if (serviceQuery.exec() && serviceQuery.next()) {
-        serviceName = serviceQuery.value(0).toString();
-    }
-
-    //Zamiana user_id w nazwę użytkownika, który dodał wizytę
-    QSqlQuery userQuery;
-    QString userName = "user";
-    userQuery.prepare("SELECT user_name FROM users WHERE user_id = :user_id");
-    userQuery.bindValue(":user_id", appointment.user_id);
-
-    if (userQuery.exec() && userQuery.next()) {
-        userName = userQuery.value(0).toString();
-    }
-
-    //Połączenie w jednego inserta
-    QSqlQuery insertQuery;
-    insertQuery.prepare(
-        "INSERT INTO archived_appointments (client_name, service_name, appointment_date, notes, user_name) "
-        "VALUES (:client_name, :service_name, :appointment_date, :notes, :user_name)");
-
-    insertQuery.bindValue(":client_name", clientName);
-    insertQuery.bindValue(":service_name", serviceName);
-    insertQuery.bindValue(":appointment_date", appointment.appointment_date);
-    insertQuery.bindValue(":notes", appointment.notes);
-    insertQuery.bindValue(":user_name", userName);
-
-    if (!insertQuery.exec()) {
-        qDebug()<<insertQuery.lastError().text();
-        return false;
-    }
-
-    return true;
-
-}
-
-bool DatabaseConnection::sign_correctness(const QString& login, const QString& password)
-{
+bool DatabaseConnection::sign_correctness(const QString& login, const QString& password) //sprawdzanie czy wprowadzony login i hasło
+{                                                                                           //są zgodnie z tymi w bazie danych
     QSqlQuery query;
 
     query.prepare( "Select user_id, password from users WHERE login = :login");
@@ -290,8 +224,8 @@ bool DatabaseConnection::sign_correctness(const QString& login, const QString& p
     return false;
 }
 
-bool DatabaseConnection::verifyPassword(const QString& password, const QString& hashedPassword)
-{
+bool DatabaseConnection::verifyPassword(const QString& password, const QString& hashedPassword) //weryfikowanie wprowadzonego hasła z
+{                                                                                               //zahashowanym hasłem w bazie danych
     auto parts = hashedPassword.split(":");
     if (parts.size() != 2) { return false; }
 
@@ -311,7 +245,7 @@ bool DatabaseConnection::verifyPassword(const QString& password, const QString& 
 }
 
 
-bool DatabaseConnection::LoginExist(const QString& username)
+bool DatabaseConnection::LoginExist(const QString& username) //sprawdzanie czy podany login użytkownika już istnieje
 {
     QSqlQuery query;
     query.prepare("Select login from users where login = :login");
@@ -323,7 +257,7 @@ bool DatabaseConnection::LoginExist(const QString& username)
     return query.next();
 }
 
-bool DatabaseConnection::autorisationCheck(const int& id)
+bool DatabaseConnection::autorisationCheck(const int& id) //sprawdzanie czy mamy uprawnienia administratora
 {
     QSqlQuery query;
     query.prepare("Select user_type from users where user_id = :id");
@@ -337,7 +271,7 @@ bool DatabaseConnection::autorisationCheck(const int& id)
     return "admin"==query.value("user_type").toString();
 }
 
-QString DatabaseConnection::getUsername(const int& id)
+QString DatabaseConnection::getUsername(const int& id) //zwracamy aktualne imie użytkownika aplikacji
 {
     QSqlQuery query;
     query.prepare("Select user_name from users where user_id = :id");
@@ -350,7 +284,7 @@ QString DatabaseConnection::getUsername(const int& id)
     return query.value("user_name").toString();
 }
 
-QString DatabaseConnection::getCurrentAdminPassword(const int& id)
+QString DatabaseConnection::getCurrentAdminPassword(const int& id) //zwracamy hasło aktualnego użytkownika
 {
     QSqlQuery query;
     query.prepare("Select password from users where user_id = :user_id");

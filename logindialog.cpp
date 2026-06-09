@@ -11,15 +11,15 @@
 
 #include "ui_logindialog.h"
 
-QString LoginDialog::GetLogin() const
+QString LoginDialog::GetLogin() const //zwróć podane hasło w menu logowania
 {
    return ui->login_line->text();
 }
-QString LoginDialog::GetPassword() const
+QString LoginDialog::GetPassword() const //zwróć hasłoo
 {
     return ui->password_line->text();
 }
-void LoginDialog::on_buttonBox_clicked()
+void LoginDialog::on_buttonBox_clicked() //logika przycisku - sprawdzamy poprawność hasła
 {
     if (!DatabaseConnection::instance().sign_correctness(GetLogin(), GetPassword()))
     {

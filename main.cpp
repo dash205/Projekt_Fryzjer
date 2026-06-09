@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
     a.setStyleSheet(R"(
         QMainWindow, QWidget#centralwidget {
             background-color: #121212;
@@ -93,14 +94,14 @@ int main(int argc, char *argv[])
             height: 0;
         }
     )");
-    a.setWindowIcon(QIcon(":/resources/nozyczki_icon.png"));
+
+    a.setWindowIcon(QIcon(":/resources/nozyczki_icon.png")); //globalna ikona dla aplikacji
     if (!DatabaseConnection::instance().openConnection()) {
         return -1;
     }
 
-    // DatabaseConnection::instance().addClient("krzysiek3");
     LoginDialog login;
-    if (login.exec() != QDialog::Accepted){ return 0;}
+    if (login.exec() != QDialog::Accepted){ return 0;} //wyświetl okno logowania (gdy logowanie przejdzie pomyślnie - wyświetl menu główne)
     MainWindow w;
     w.show();
 

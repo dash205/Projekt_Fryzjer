@@ -27,7 +27,6 @@ set(PROJECT_SOURCES
         appointments.h
         appointments.ui
         appointmentClass.h
-        serviceData.h
         clientClass.h
         addservicedialog.cpp
         addservicedialog.h
@@ -39,7 +38,6 @@ set(PROJECT_SOURCES
         logindialog.cpp
         logindialog.h
         logindialog.ui
-        logindialogdata.h
         users.cpp
         users.h
         users.ui
