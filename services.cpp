@@ -112,7 +112,7 @@ void Services::onDeleteClicked()
     }
 }
 
-Services::Services(QWidget *parent) : QWidget(parent), ui(new Ui::Services) {
+Services::Services(QWidget *parent) : QWidget(parent), ui(new Ui::Services) { //konstruktor
     ui->setupUi(this);
     connect(ui->AddService, &QPushButton::clicked, this, &Services::onAddClicked);
     connect(ui->DeleteService, &QPushButton::clicked, this, &Services::onDeleteClicked);
