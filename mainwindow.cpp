@@ -5,7 +5,7 @@
 #include  <QPixmap>
 #include "appointments.h"
 
-void MainWindow::createModel()
+void MainWindow::createModel() //Tworzenie modelu i wyświetlanie tabeli w oknie menu głównego
 {
     int userId = DatabaseConnection::instance().currentUserId;
 
@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //Logika dla nagłówka powitalnego
     ui->welcomeHeader->setText("Witaj "+DatabaseConnection::instance().getUsername(DatabaseConnection::instance().currentUserId)+"!");
     createModel();
 
@@ -62,10 +64,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     appointmentsPage = new Appointments(this);
     int apponmentsIndex = ui->stackedWidget->addWidget(appointmentsPage);
-    connect(appointmentsPage, &Appointments::appointmentChanged,
-                this, &MainWindow::createModel);
+
+
     ui->actionUsers->setVisible(false);
 
+    //sprawdzanie dostępu do okna zarządzania użytkownikami (gdy id admninistratora - wyświetl możliwość przejścia do okna)
     if (DatabaseConnection::instance().autorisationCheck(DatabaseConnection::instance().currentUserId))
     {
         ui->subHeaderText->setText("Jesteś zalogowany jako administrator.");

@@ -10,9 +10,9 @@
 #include "databaseconnection.h"
 #include "ui_addservicedialog.h"
 #include "ui_services.h"
-#include "serviceData.h"
+#include "serviceClass.h"
 
-void Services::createModel()
+void Services::createModel() //tworzymy model naszej tabeli w oknie usług
 {
     model = new QSqlTableModel(this);
     model->setObjectName("Services");
@@ -27,7 +27,7 @@ void Services::createModel()
     qDebug() << model->rowCount();
 }
 
-void Services::createTable()
+void Services::createTable() //tworzymy widok naszej tabeli w oknie usług
 {
     ui->ServicesTable->setModel(model);
     ui->ServicesTable->setColumnHidden(0, true);
@@ -40,12 +40,9 @@ void Services::createTable()
 
     ui->ServicesTable->verticalHeader()->setDefaultSectionSize(40);
     ui->ServicesTable->setShowGrid(false);
-
-
-
 }
 
-void Services::onAddClicked()
+void Services::onAddClicked() //logika przycisku dodawania usług
 {
 
     AddServiceDialog dialog(AddServiceDialog::dialogMode::add, this);
@@ -62,7 +59,7 @@ void Services::onAddClicked()
     }
 }
 
-void Services::onEditClicked()
+void Services::onEditClicked() //logika przycisku edytowania usług
 {
     QModelIndex index = ui->ServicesTable->currentIndex();
     if (!index.isValid())
@@ -87,10 +84,10 @@ void Services::onEditClicked()
     }
 }
 
-void Services::onDeleteClicked()
+void Services::onDeleteClicked() //logika przycisku usuwania usług
 {
     QModelIndex index = ui->ServicesTable->currentIndex();
-    ServiceData serviceData;
+    Service serviceData;
     serviceData.id = model->data(model->index(index.row(), 0)).toInt();
     if (!index.isValid())
     {

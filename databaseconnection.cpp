@@ -3,7 +3,7 @@
 #include <QCryptographicHash>
 #include <QMessageBox>
 
-DatabaseConnection& DatabaseConnection::instance() {
+DatabaseConnection& DatabaseConnection::instance() { //instancja naszej bazy danych
     static DatabaseConnection inst;
     return inst;
 }
@@ -35,7 +35,8 @@ bool DatabaseConnection::rollbackTransaction() {
     return m_db.rollback();
 }
 
-bool DatabaseConnection::CanServicesBeDeleted(const ServiceData& service)
+//sprawdzamy czy możemy ussunąć usługę (czy nie jest aktualnie przypisana do wizyty)
+bool DatabaseConnection::CanServicesBeDeleted(const Service& service)
 {
     QSqlQuery query(m_db);
     query.prepare("Select a.* from appointments a "
@@ -266,6 +267,7 @@ bool DatabaseConnection::addArchivalAppointment(const Appointment &appointment) 
 
 }
 
+//sprawdzanie czy wprowadzony login i hasło są zgodne z tymi w bazie danych
 bool DatabaseConnection::sign_correctness(const QString& login, const QString& password)
 {
     QSqlQuery query;
@@ -290,6 +292,7 @@ bool DatabaseConnection::sign_correctness(const QString& login, const QString& p
     return false;
 }
 
+//weryfikowanie wprowadzonego hasła z zahashowanym hasłem w bazie danych
 bool DatabaseConnection::verifyPassword(const QString& password, const QString& hashedPassword)
 {
     auto parts = hashedPassword.split(":");
@@ -310,7 +313,7 @@ bool DatabaseConnection::verifyPassword(const QString& password, const QString& 
     return diff == 0;
 }
 
-
+//sprawdzenie czy podany login użytkownika już istnieje
 bool DatabaseConnection::LoginExist(const QString& username)
 {
     QSqlQuery query;
@@ -323,6 +326,7 @@ bool DatabaseConnection::LoginExist(const QString& username)
     return query.next();
 }
 
+//sprawdzenie czy mamy uprawnienia administratora
 bool DatabaseConnection::autorisationCheck(const int& id)
 {
     QSqlQuery query;
@@ -337,6 +341,7 @@ bool DatabaseConnection::autorisationCheck(const int& id)
     return "admin"==query.value("user_type").toString();
 }
 
+//zwracamy aktualne imie użytkownika aplikacji
 QString DatabaseConnection::getUsername(const int& id)
 {
     QSqlQuery query;
@@ -350,6 +355,7 @@ QString DatabaseConnection::getUsername(const int& id)
     return query.value("user_name").toString();
 }
 
+//zwracamy hasło aktualnego użytkownika
 QString DatabaseConnection::getCurrentAdminPassword(const int& id)
 {
     QSqlQuery query;

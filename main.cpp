@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // DatabaseConnection::instance().addClient("krzysiek3");
     LoginDialog login;
     if (login.exec() != QDialog::Accepted){ return 0;}
     MainWindow w;

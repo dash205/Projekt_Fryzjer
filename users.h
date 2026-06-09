@@ -34,7 +34,7 @@ private:
     void createTable();
     void onAddClicked();
     void onDeleteClicked();
-    void onEditClicked();
+    void onPasswordChangeClicked();
     bool passwordCheck();
 };
 
