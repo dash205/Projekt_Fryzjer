@@ -21,7 +21,7 @@ void MainWindow::createModel()
                 "FROM appointments a "
                 "INNER JOIN clients c ON a.client_id = c.id "
                 "INNER JOIN services s ON a.service_id = s.id "
-                "WHERE a.client_id = %1 "
+                "WHERE a.user_id = %1 "
                 "ORDER BY a.appointment_date DESC"
     ).arg(userId));
 

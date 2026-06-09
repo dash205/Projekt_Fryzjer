@@ -1,7 +1,6 @@
 #include "clients.h"
 #include "ui_clients.h"
 #include <QMessageBox>
-#include <QSqlError>
 #include <QSqlTableModel>
 
 #include "addclientdialog.h"

@@ -98,7 +98,27 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="2" column="4">
+         <widget class="QLabel" name="subHeaderText">
+          <property name="font">
+           <font>
+            <italic>false</italic>
+            <bold>false</bold>
+            <strikeout>false</strikeout>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing</set>
+          </property>
+          <property name="margin">
+           <number>16</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="3">
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="leftMargin">
            <number>30</number>
@@ -134,26 +154,6 @@
            <widget class="QTableView" name="tableView"/>
           </item>
          </layout>
-        </item>
-        <item row="2" column="4">
-         <widget class="QLabel" name="subHeaderText">
-          <property name="font">
-           <font>
-            <italic>false</italic>
-            <bold>false</bold>
-            <strikeout>false</strikeout>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing</set>
-          </property>
-          <property name="margin">
-           <number>16</number>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
